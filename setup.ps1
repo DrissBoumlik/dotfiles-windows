@@ -227,12 +227,12 @@ catch {
 try {
     Write-Host "`nDownloading PHP versions..."
     $phpUrls = @(
-        # "https://windows.php.net/downloads/releases/archives/php-5.6.9-Win32-VC11-x64.zip",
-        # "https://windows.php.net/downloads/releases/archives/php-7.0.9-Win32-VC14-x64.zip",
-        # "https://windows.php.net/downloads/releases/archives/php-7.1.9-Win32-VC14-x64.zip",
-        # "https://windows.php.net/downloads/releases/archives/php-7.2.9-Win32-VC15-x64.zip",
-        # "https://windows.php.net/downloads/releases/archives/php-7.3.9-Win32-VC15-x64.zip",
-        # "https://windows.php.net/downloads/releases/archives/php-7.4.9-Win32-vc15-x64.zip",
+        "https://windows.php.net/downloads/releases/archives/php-5.6.9-Win32-VC11-x64.zip",
+        "https://windows.php.net/downloads/releases/archives/php-7.0.9-Win32-VC14-x64.zip",
+        "https://windows.php.net/downloads/releases/archives/php-7.1.9-Win32-VC14-x64.zip",
+        "https://windows.php.net/downloads/releases/archives/php-7.2.9-Win32-VC15-x64.zip",
+        "https://windows.php.net/downloads/releases/archives/php-7.3.9-Win32-VC15-x64.zip",
+        "https://windows.php.net/downloads/releases/archives/php-7.4.9-Win32-vc15-x64.zip",
         "https://windows.php.net/downloads/releases/archives/php-8.0.9-Win32-vs16-x64.zip",
         "https://windows.php.net/downloads/releases/archives/php-8.1.9-Win32-vs16-x64.zip",
         "https://windows.php.net/downloads/releases/archives/php-8.2.9-Win32-vs16-x64.zip",
@@ -275,64 +275,64 @@ catch {
 try {
     Write-Host "`nDownloading XDEBUG..."
     $xdebugUrls = @(
-        # "https://xdebug.org/files/php_xdebug-3.3.2-8.3-vs16-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-3.3.2-8.2-vs16-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-3.3.2-8.1-vs16-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-3.3.2-8.0-vs16-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.3.2-8.3-vs16-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.3.2-8.2-vs16-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.3.2-8.1-vs16-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.3.2-8.0-vs16-x86_64.dll",
         
-        # "https://xdebug.org/files/php_xdebug-3.3.1-8.3-vs16-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-3.3.1-8.2-vs16-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-3.3.1-8.1-vs16-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-3.3.1-8.0-vs16-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.3.1-8.3-vs16-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.3.1-8.2-vs16-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.3.1-8.1-vs16-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.3.1-8.0-vs16-x86_64.dll",
         
-        # "https://xdebug.org/files/php_xdebug-3.3.0-8.3-vs16-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-3.3.0-8.2-vs16-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-3.3.0-8.1-vs16-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-3.3.0-8.0-vs16-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.3.0-8.3-vs16-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.3.0-8.2-vs16-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.3.0-8.1-vs16-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.3.0-8.0-vs16-x86_64.dll",
         
-        # "https://xdebug.org/files/php_xdebug-3.2.2-8.2-vs16-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-3.2.2-8.1-vs16-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-3.2.2-8.0-vs16-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.2.2-8.2-vs16-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.2.2-8.1-vs16-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.2.2-8.0-vs16-x86_64.dll",
         
-        # "https://xdebug.org/files/php_xdebug-3.1.6-8.1-vs16-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-3.1.6-8.0-vs16-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-3.1.6-7.4-vc15-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-3.1.6-7.3-vc15-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-3.1.6-7.2-vc15-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.1.6-8.1-vs16-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.1.6-8.0-vs16-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.1.6-7.4-vc15-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.1.6-7.3-vc15-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.1.6-7.2-vc15-x86_64.dll",
         
-        # "https://xdebug.org/files/php_xdebug-3.0.4-8.0-vs16-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-3.0.4-7.4-vc15-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-3.0.4-7.3-vc15-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-3.0.4-7.2-vc15-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.0.4-8.0-vs16-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.0.4-7.4-vc15-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.0.4-7.3-vc15-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-3.0.4-7.2-vc15-x86_64.dll",
     
-        # "https://xdebug.org/files/php_xdebug-2.9.8-7.4-vc15-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-2.9.8-7.3-vc15-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-2.9.8-7.2-vc15-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-2.9.8-7.1-vc14-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.9.8-7.4-vc15-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.9.8-7.3-vc15-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.9.8-7.2-vc15-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.9.8-7.1-vc14-x86_64.dll",
     
-        # "https://xdebug.org/files/php_xdebug-2.8.0-7.4-vc15-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-2.8.0-7.3-vc15-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-2.8.0-7.2-vc15-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-2.8.0-7.1-vc14-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.8.0-7.4-vc15-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.8.0-7.3-vc15-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.8.0-7.2-vc15-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.8.0-7.1-vc14-x86_64.dll",
         
-        # "https://xdebug.org/files/php_xdebug-2.7.0-7.3-vc15-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-2.7.0-7.2-vc15-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-2.7.0-7.1-vc14-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.7.0-7.3-vc15-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.7.0-7.2-vc15-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.7.0-7.1-vc14-x86_64.dll",
     
-        # "https://xdebug.org/files/php_xdebug-2.6.0-7.2-vc15-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-2.6.0-7.1-vc14-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-2.6.0-7.0-vc14-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.6.0-7.2-vc15-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.6.0-7.1-vc14-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.6.0-7.0-vc14-x86_64.dll",
         
-        # "https://xdebug.org/files/php_xdebug-2.5.5-7.1-vc14-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-2.5.5-7.0-vc14-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-2.5.5-5.6-vc11-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.5.5-7.1-vc14-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.5.5-7.0-vc14-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.5.5-5.6-vc11-x86_64.dll",
         
-        # "https://xdebug.org/files/php_xdebug-2.5.0-7.1-vc14-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-2.5.0-7.0-vc14-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-2.5.0-5.6-vc11-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.5.0-7.1-vc14-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.5.0-7.0-vc14-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.5.0-5.6-vc11-x86_64.dll",
         
-        # "https://xdebug.org/files/php_xdebug-2.4.0-7.0-vc14-x86_64.dll",
-        # "https://xdebug.org/files/php_xdebug-2.4.0-5.6-vc11-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.4.0-7.0-vc14-x86_64.dll",
+        "https://xdebug.org/files/php_xdebug-2.4.0-5.6-vc11-x86_64.dll",
         
         "https://xdebug.org/files/php_xdebug-2.3.3-5.6-vc11-x86_64.dll",
         "https://xdebug.org/files/php_xdebug-2.3.2-5.6-vc11-x86_64.dll",
@@ -384,7 +384,7 @@ catch {
 #endregion
 
 #region WHAT TO DO NEXT
-What-ToDo-Next
+What-ToDo-Next -stepsResult $WhatWasDoneMessage
 #endregion
 
 Write-Host "`nAll tasks completed.`n`n"
