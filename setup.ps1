@@ -1,6 +1,7 @@
 
 #region FUNCTIONS
 # Function to download a file
+$ProgressPreference = 'SilentlyContinue'
 function Download-File {
     param (
         [string]$url,
@@ -13,7 +14,7 @@ function Make-Directory {
     param ( [string]$path )
 
     if (-not (Test-Path -Path $path -PathType Container)) {
-        mkdir $path
+        mkdir $path | Out-Null
     }
 }
 
