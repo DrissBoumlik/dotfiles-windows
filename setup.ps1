@@ -49,7 +49,7 @@ try {
     
     # Copy composer version 1 to the composer path
     Copy-Item -Path "$PWD\composer-v1" -Destination "$downloadPath\composer\v1" -Recurse
-    Update-Path-Env-Variable -newVariableName "$downloadPath\composer\v1"
+    Update-Path-Env-Variable -newVariableName "$downloadPath\composer\v1" -isVarName 0
 
     $WhatWasDoneMessage = "$WhatWasDoneMessage    - Composer was downloaded successfully, you need to install it manually :)`n"
 }
@@ -72,51 +72,40 @@ if (Test-Path -Path "$downloadPath\Cmder" -PathType Container) {
 
 try {
     #region DOWNLOAD CMDER
-    Write-Host "`nDownloading Cmder..."
+    Write-Host "`nDownloading & Extracting Cmder..."
     $cmderUrl = "https://github.com/cmderdev/cmder/releases/download/v1.3.25/cmder.zip"
     # $cmderUrl = "https://github.com/cmderdev/cmder/releases/download/v1.3.20/cmder_mini.zip" # TESTING
     Download-File -url $cmderUrl -output "$downloadPath\Cmder.zip"
 
-    Write-Host "`nExtracting Cmder..."
     Extract-Zip -zipPath "$downloadPath\Cmder.zip" -extractPath "$downloadPath\Cmder"
     Remove-Item "$downloadPath\Cmder.zip"
-    Copy-Item -Path "$PWD\config\ConEmu.xml" -Destination "$downloadPath\Cmder\vendor\conemu-maximus5\ConEmu.xml.bak" 
 
     Add-Env-Variable -newVariableName "linux_cmd" -newVariableValue "$downloadPath\Cmder\vendor\git-for-windows\usr\bin;$downloadPath\Cmder\vendor\bin" -updatePath 1
     #endregion
-    
-    #region ADD CUSTOM ALIASES
-    Write-Host "`nAdding Custom Aliases..."
-    # Get-Content -Path "$PWD\config\user_aliases.txt" | Add-Content -Path "$downloadPath\Cmder\config\user_aliases.cmd.bak"
-    Copy-Item -Path "$PWD\config\user_aliases.cmd" -Destination "$downloadPath\Cmder\config\user_aliases.cmd.bak" 
-    #endregion
 
     #region DOWNLOAD & SETUP FLEXPROMPT
-    Write-Host "`nDownloading FlexPrompt..."
+    Write-Host "`nDownloading & Extracting FlexPrompt..."
     # $flexPromptUrl = "https://github.com/AmrEldib/cmder-powerline-prompt/archive/master.zip"
     $flexPromptUrl = "https://github.com/chrisant996/clink-flex-prompt/releases/download/v0.17/clink-flex-prompt-0.17.zip"
     Download-File -url $flexPromptUrl -output "$downloadPath\flexprompt.zip"
 
-    Write-Host "`nExtracting FlexPrompt..."
     Extract-Zip -zipPath "$downloadPath\flexprompt.zip" -extractPath "$downloadPath\Cmder\config"
-    Remove-Item "$downloadPath\flexprompt.zip"
     Copy-Item -Path "$PWD\config\flexprompt_autoconfig.lua" -Destination "$downloadPath\Cmder\config"
+    Remove-Item "$downloadPath\flexprompt.zip"
     #endregion
 
     #region DOWNLOAD & SETUP Z
-    Write-Host "`nDownloading Z..."
-    # $zUrl = "https://raw.githubusercontent.com/rupa/z/master/z.sh"
+    Write-Host "`nDownloading & Extracting Z..."
     $zUrl = "https://github.com/skywind3000/z.lua/archive/refs/heads/master.zip"
     Download-File -url $zUrl -output "$downloadPath\z.zip"
 
-    Write-Host "`nExtracting Z..."
     Extract-Zip -zipPath "$downloadPath\z.zip" -extractPath $downloadPath
     Copy-Item -Path "$downloadPath\z.lua-master\z.lua", "$downloadPath\z.lua-master\z.cmd" -Destination "$downloadPath\Cmder\vendor"
     Remove-Item "$downloadPath\z.zip", "$downloadPath\z.lua-master" -Recurse
     #endregion
     
     $WhatWasDoneMessage = "$WhatWasDoneMessage    - Cmder\vendor\git-for-windows\usr\bin and Cmder\vendor\bin were added to the PATH variable`n"
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - Cmder was successfully setup with (aliases, flexprompt, and z) :)`n"
+    $WhatWasDoneMessage = "$WhatWasDoneMessage    - Cmder was successfully setup with (flexprompt, and z) :)`n"
 }
 catch {
     $WhatWasDoneMessage = "$WhatWasDoneMessage    - Issue with downloading/installing cmder :(`n"

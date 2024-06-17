@@ -7,5 +7,8 @@ if ($response -eq "no" -or $response -eq "n") {
     exit
 }
 
-Copy-Item -Path "$downloadPath\Cmder\vendor\conemu-maximus5\ConEmu.xml.bak" -Destination "$downloadPath\Cmder\vendor\conemu-maximus5\ConEmu.xml" 
-Copy-Item -Path "$downloadPath\Cmder\config\user_aliases.cmd.bak" -Destination "$downloadPath\Cmder\config\user_aliases.cmd" 
+$downloadPath = Prompt-Quesiton -message "Indicate the target directory (C:\[Container])"
+$downloadPath = "C:\$downloadPath"
+
+Copy-Item -Path "$PWD\config\ConEmu.xml" -Destination "$downloadPath\Cmder\vendor\conemu-maximus5\ConEmu.xml" 
+Get-Content -Path "$PWD\config\user_aliases.cmd" | Add-Content -Path "$downloadPath\Cmder\config\user_aliases.cmd"

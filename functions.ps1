@@ -68,9 +68,14 @@ function Add-Env-Variable {
 }
 
 function Update-Path-Env-Variable {
-    param( [string]$newVariableName )
+    param( [string]$newVariableName, [boolean]$isVarName = 1 )
     $currentPath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::Machine)
-    $currentPath += ";%$newVariableName%"
+    if ($isVarName -eq 1) {
+        $currentPath += ";%$newVariableName%"
+    } else {
+        $currentPath += ";$newVariableName"
+    }
+   
     [System.Environment]::SetEnvironmentVariable("PATH", $currentPath, [System.EnvironmentVariableTarget]::Machine)
 }
 
@@ -86,7 +91,7 @@ function What-ToDo-Next {
     Write-Host "||  - Run to check for any updates : > clink update                                     ||"
     Write-Host "||  - Install downloaded font and Add it to cmder settings.                             ||"
     Write-Host "||  - Start cmder and Run 'flexprompt configure' to customize the prompt style.         ||"
-    Write-Host "||  - Rename Cmder\vendor\conemu-maximus5\ConEmu.xml.bak to ConEmu.xml :                ||"
+    Write-Host "||  - Run ./followup.ps1 for additional cmder configuration                             ||"
     Write-Host "=========================================================================================="
 }
 #endregion
