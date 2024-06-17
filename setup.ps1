@@ -32,7 +32,7 @@ catch {
 #region DOWNLOAD XAMPP
 try {
     Write-Host "`nDownloading Xampp..."
-    $XamppUrl = "https://deac-fra.dl.sourceforge.net/project/xampp/XAMPP%20Windows/8.2.12/xampp-windows-x64-8.2.12-0-VS16-installer.exe"
+    $XamppUrl = "https://deac-fra.dl.sourceforge.net/project/xampp/XAMPP%20Windows/8.2.12/xampp-windows-x64-8.2.12-0-VS16-installer.exe?viasf=1"
     Download-File -url $XamppUrl -output "$downloadPath\2-xampp-windows-x64-8.2.12-0-VS16-installer.exe"
     $WhatWasDoneMessage = "$WhatWasDoneMessage    - Xampp was downloaded successfully, you need to install it manually :)`n"
 }
