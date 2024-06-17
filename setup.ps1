@@ -87,7 +87,6 @@ function What-ToDo-Next {
     Write-Host "||  - Install downloaded font and Add it to cmder settings.                             ||"
     Write-Host "||  - Start cmder and Run 'flexprompt configure' to customize the prompt style.         ||"
     Write-Host "||  - Rename Cmder\vendor\conemu-maximus5\ConEmu.xml.bak to ConEmu.xml :                ||"
-    Write-Host "||  - Complete nvm installation                                                         ||"
     Write-Host "=========================================================================================="
 }
 #endregion
@@ -132,6 +131,18 @@ catch {
 }
 #endregion
 
+#region DOWNLOAD XAMPP
+try {
+    Write-Host "`nDownloading Xampp..."
+    $XamppUrl = "https://sourceforge.net/projects/xampp/files/XAMPP%20Windows/8.1.25/xampp-windows-x64-8.1.25-0-VS16-installer.exe"
+    Download-File -url $XamppUrl -output "$downloadPath\xampp-windows-x64-8.1.25-0-VS16-installer.exe"
+    $WhatWasDoneMessage = "$WhatWasDoneMessage    - Xampp was downloaded successfully, you need to install it manually :)`n"
+}
+catch {
+    $WhatWasDoneMessage = "$WhatWasDoneMessage    - Xampp failed to download, try later :(`n"
+}
+#endregion
+
 #region SETUP CMDER
 if (Test-Path -Path "$downloadPath\Cmder" -PathType Container) {
     Write-Host "The directory "$downloadPath\Cmder" already exists !!"
@@ -156,7 +167,6 @@ try {
     Remove-Item "$downloadPath\Cmder.zip"
     Copy-Item -Path "$PWD\config\ConEmu.xml" -Destination "$downloadPath\Cmder\vendor\conemu-maximus5\ConEmu.xml.bak" 
 
-    Write-Host "`nCmder\vendor\git-for-windows\usr\bin and Cmder\vendor\bin were added to the PATH variable"
     Add-Env-Variable -newVariableName "linux_cmd" -newVariableValue "$downloadPath\Cmder\vendor\git-for-windows\usr\bin;$downloadPath\Cmder\vendor\bin" -updatePath 1
     #endregion
     
@@ -190,6 +200,7 @@ try {
     Remove-Item "$downloadPath\z.zip", "$downloadPath\z.lua-master" -Recurse
     #endregion
     
+    $WhatWasDoneMessage = "$WhatWasDoneMessage    - Cmder\vendor\git-for-windows\usr\bin and Cmder\vendor\bin were added to the PATH variable`n"
     $WhatWasDoneMessage = "$WhatWasDoneMessage    - Cmder was successfully setup with (aliases, flexprompt, and z) :)`n"
 }
 catch {
@@ -201,15 +212,15 @@ catch {
 try {
     Write-Host "`nDownloading Font..."
     $nfUrls = @(
-        # "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS NF Regular.ttf",
-        # "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS NF Bold.ttf",
-        # "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS NF Italic.ttf",
-        # "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS NF Bold Italic.ttf",
+        "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS NF Regular.ttf",
+        "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS NF Bold.ttf",
+        "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS NF Italic.ttf",
+        "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS NF Bold Italic.ttf",
         
-        "https://github.com/powerline/fonts/blob/master/AnonymousPro/Anonymice Powerline Bold Italic.ttf",
-        "https://github.com/powerline/fonts/blob/master/AnonymousPro/Anonymice Powerline Bold.ttf",
-        "https://github.com/powerline/fonts/blob/master/AnonymousPro/Anonymice Powerline Italic.ttf",
-        "https://github.com/powerline/fonts/blob/master/AnonymousPro/Anonymice Powerline.ttf"
+        "https://github.com/powerline/fonts/raw/master/AnonymousPro/Anonymice Powerline Bold Italic.ttf",
+        "https://github.com/powerline/fonts/raw/master/AnonymousPro/Anonymice Powerline Bold.ttf",
+        "https://github.com/powerline/fonts/raw/master/AnonymousPro/Anonymice Powerline Italic.ttf",
+        "https://github.com/powerline/fonts/raw/master/AnonymousPro/Anonymice Powerline.ttf"
     )
     Make-Directory -path "$downloadPath\fonts"
     foreach ($url in $nfUrls) {
@@ -246,8 +257,8 @@ try {
     foreach ($url in $phpUrls) {
         $fileName = Split-Path $url -Leaf
         $fileName = $fileName -replace ".zip", ""
-        Download-File -url $url -output "$personalEnvPath\zip\$fileName"
-        Extract-Zip -zipPath "$personalEnvPath\zip\$fileName" -extractPath "$personalEnvPath\php\$fileName"
+        Download-File -url $url -output "$downloadPath\$personalEnvPath\zip\$fileName"
+        Extract-Zip -zipPath "$downloadPath\$personalEnvPath\zip\$fileName" -extractPath "$downloadPath\$personalEnvPath\php\$fileName"
         $phpEnvVarName = $phpIndex
         $phpIndex--
         if ($fileName -match "php-(\d+)\.(\d+)\.") {
@@ -260,7 +271,7 @@ try {
             }
         }
         $phpEnvVarName = "php$phpEnvVarName"
-        Add-Env-Variable -newVariableName $phpEnvVarName -newVariableValue "$personalEnvPath\php\$fileName" -updatePath 0
+        Add-Env-Variable -newVariableName $phpEnvVarName -newVariableValue "$downloadPath\$personalEnvPath\php\$fileName" -updatePath 0
     }
     Add-Env-Variable -newVariableName "php_now" -newVariableValue "$downloadPath\$personalEnvPath\php\$fileName" -updatePath 1
     Remove-Item -Path "$downloadPath\$personalEnvPath\zip" -Recurse -Force
