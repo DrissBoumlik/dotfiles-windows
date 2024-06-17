@@ -3,10 +3,7 @@
 # Function to download a file
 $ProgressPreference = 'SilentlyContinue'
 function Download-File {
-    param (
-        [string]$url,
-        [string]$output
-    )
+    param ( [string]$url, [string]$output )
     Invoke-WebRequest -Uri $url -OutFile $output
 }
 
@@ -49,9 +46,7 @@ function Prompt-YesOrNoWithDefault {
 }
 
 function Prompt-Quesiton {
-    param(
-        [string]$message
-    )
+    param( [string]$message )
 
     $promptMessage = "$message "
     $response = Read-Host $promptMessage
@@ -134,7 +129,7 @@ catch {
 #region DOWNLOAD XAMPP
 try {
     Write-Host "`nDownloading Xampp..."
-    $XamppUrl = "https://sourceforge.net/projects/xampp/files/XAMPP%20Windows/8.1.25/xampp-windows-x64-8.1.25-0-VS16-installer.exe"
+    $XamppUrl = "https://deac-fra.dl.sourceforge.net/project/xampp/XAMPP%20Windows/8.2.12/xampp-windows-x64-8.2.12-0-VS16-installer.exe?viasf=1"
     Download-File -url $XamppUrl -output "$downloadPath\xampp-windows-x64-8.1.25-0-VS16-installer.exe"
     $WhatWasDoneMessage = "$WhatWasDoneMessage    - Xampp was downloaded successfully, you need to install it manually :)`n"
 }
