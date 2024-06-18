@@ -20,8 +20,9 @@ if ($response -eq "yes" -or $response -eq "y") {
     $directories = Get-ChildItem -Path "C:\" -Directory -ErrorAction SilentlyContinue -Force | Where-Object { $_.Name -match 'xampp' }
     if ($directories.Count -gt 0) {
         $xamppPath = ($directories | Select-Object -First 1).FullName
+        Add-Env-Variable -newVariableName "phpxmp" -newVariableValue "$xamppPath\php" -updatePath 0
         Add-Env-Variable -newVariableName "php_now" -newVariableValue "$xamppPath\php" -updatePath 1
-        Write-Host "`nThe 'php_now' variable was successfully added to the PATH :)"
+        Write-Host "`nThe 'php_now' & 'phpxmp' variables were successfully added to the PATH :)"
     } else {
         Write-Host "No XAMPP directories found. :("
     }
