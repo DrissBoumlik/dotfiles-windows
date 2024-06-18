@@ -1,76 +1,8 @@
 
 . ./functions.ps1
 
-
-#region SETUP THE CONTAINER DIRECTORY
-# Set the download paths
-$downloadPath = Prompt-Quesiton -message "Indicate the target directory (C:\[Container])"
-$downloadPath = "C:\$downloadPath"
-$personalEnvPath = Prompt-Quesiton -message "Indicate the personal env path directory (C:\[Container]\[env])"
-# $personalEnvPath = "D:\$personalEnvPath" 
-
-# Create the download directory if it doesn't exist
-if (!(Test-Path -Path $downloadPath)) {
-    New-Item -ItemType Directory -Force -Path $downloadPath
-}
-#endregion
-
-$WhatWasDoneMessage = ""
-
-#region DOWNLOAD GIT
-try {
-    Write-Host "`nDownloading Git..."
-    $gitUrl = "https://github.com/git-for-windows/git/releases/download/v2.45.2.windows.1/Git-2.45.2-64-bit.exe"
-    Download-File -url $gitUrl -output "$downloadPath\1-Git-2.45.2-64-bit.exe"
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - Git was downloaded successfully, you need to install it manually :)`n"
-}
-catch {
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - Git failed to download, try later :(`n"
-}
-#endregion
-
-#region DOWNLOAD XAMPP
-try {
-    Write-Host "`nDownloading Xampp..."
-    $XamppUrl = "https://deac-fra.dl.sourceforge.net/project/xampp/XAMPP%20Windows/8.2.12/xampp-windows-x64-8.2.12-0-VS16-installer.exe?viasf=1"
-    Download-File -url $XamppUrl -output "$downloadPath\2-xampp-windows-x64-8.2.12-0-VS16-installer.exe"
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - Xampp was downloaded successfully, you need to install it manually :)`n"
-}
-catch {
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - Xampp failed to download, try later :(`n"
-}
-#endregion
-
-#region DOWNLOAD COMPOSER
-try {
-    Write-Host "`nDownloading Composer..."
-    $composerUrl = "https://getcomposer.org/Composer-Setup.exe"
-    Download-File -url $composerUrl -output "$downloadPath\3-Composer-Setup.exe"
-    
-    # Copy composer version 1 to the composer path
-    Copy-Item -Path "$PWD\composer-v1" -Destination "$downloadPath\composer\v1" -Recurse
-    Update-Path-Env-Variable -newVariableName "$downloadPath\composer\v1" -isVarName 0
-
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - Composer was downloaded successfully, you need to install it manually :)`n"
-}
-catch {
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - Composer failed to download, try later :(`n"
-}
-#endregion
-
-#region SETUP CMDER
-if (Test-Path -Path "$downloadPath\Cmder" -PathType Container) {
-    Write-Host "The directory "$downloadPath\Cmder" already exists !!"
-    $response = Prompt-YesOrNoWithDefault -message "Do you want to proceed?"
-    if ($response -eq "no" -or $response -eq "n") {
-        exit
-    } else {
-        # GARBAGE COLLECTION =====================================
-        Remove-Item -Path "$downloadPath\Cmder" -Recurse -Force
-    }
-}
-
-try {
+function Setup-Cmder {
+    param ( [string]$downloadPath, [PSCustomObject]$WhatWasDoneMessages = @() )
     #region DOWNLOAD CMDER
     Write-Host "`nDownloading & Extracting Cmder..."
     $cmderUrl = "https://github.com/cmderdev/cmder/releases/download/v1.3.25/cmder.zip"
@@ -103,12 +35,119 @@ try {
     Copy-Item -Path "$downloadPath\z.lua-master\z.lua", "$downloadPath\z.lua-master\z.cmd" -Destination "$downloadPath\Cmder\vendor"
     Remove-Item "$downloadPath\z.zip", "$downloadPath\z.lua-master" -Recurse
     #endregion
-    
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - Cmder\vendor\git-for-windows\usr\bin and Cmder\vendor\bin were added to the PATH variable`n"
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - Cmder was successfully setup with (flexprompt, and z) :)`n"
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - Cmder\vendor\git-for-windows\usr\bin and Cmder\vendor\bin were added to the PATH variable"
+        ForegroundColor = "Black"
+        BackgroundColor = "Green"
+    }
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - Cmder was successfully setup with (flexprompt, and z) :)"
+        ForegroundColor = "Black"
+        BackgroundColor = "Green"
+    }
+    return $WhatWasDoneMessages
+}
+
+#region SETUP THE CONTAINER DIRECTORY
+# Set the download paths
+$downloadPath = Prompt-Quesiton -message "Indicate the target directory (C:\[Container])"
+$downloadPath = "C:\$downloadPath"
+$personalEnvPath = Prompt-Quesiton -message "Indicate the personal env path directory (C:\[Container]\[env])"
+# $personalEnvPath = "D:\$personalEnvPath" 
+
+# Create the download directory if it doesn't exist
+if (!(Test-Path -Path $downloadPath)) {
+    New-Item -ItemType Directory -Force -Path $downloadPath
+}
+#endregion
+
+$WhatWasDoneMessages = @()
+
+#region DOWNLOAD GIT
+try {
+    Write-Host "`nDownloading Git..."
+    $gitUrl = "https://github.com/git-for-windows/git/releases/download/v2.45.2.windows.1/Git-2.45.2-64-bit.exe"
+    Download-File -url $gitUrl -output "$downloadPath\1-Git-2.45.2-64-bit.exe"
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - Git was downloaded successfully, you need to install it manually :)"
+        ForegroundColor = "Black"
+        BackgroundColor = "Green"
+    }
 }
 catch {
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - Issue with downloading/installing cmder :(`n"
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - Git failed to download, try later :("
+        ForegroundColor = "Black"
+        BackgroundColor = "Red"
+    }
+}
+#endregion
+
+#region DOWNLOAD XAMPP
+try {
+    Write-Host "`nDownloading Xampp..."
+    $XamppUrl = "https://deac-fra.dl.sourceforge.net/project/xampp/XAMPP%20Windows/8.2.12/xampp-windows-x64-8.2.12-0-VS16-installer.exe?viasf=1"
+    Download-File -url $XamppUrl -output "$downloadPath\2-xampp-windows-x64-8.2.12-0-VS16-installer.exe"
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - Xampp was downloaded successfully, you need to install it manually :)"
+        ForegroundColor = "Black"
+        BackgroundColor = "Green"
+    }
+}
+catch {
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - Xampp failed to download, try later :("
+        ForegroundColor = "Black"
+        BackgroundColor = "Red"
+    }
+}
+#endregion
+
+#region DOWNLOAD COMPOSER
+try {
+    Write-Host "`nDownloading Composer..."
+    $composerUrl = "https://getcomposer.org/Composer-Setup.exe"
+    Download-File -url $composerUrl -output "$downloadPath\3-Composer-Setup.exe"
+    
+    # Copy composer version 1 to the composer path
+    Copy-Item -Path "$PWD\composer-v1" -Destination "C:\composer\v1" -Recurse
+    Update-Path-Env-Variable -newVariableName "$downloadPath\composer\v1" -isVarName 0
+
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - Composer was downloaded successfully, you need to install it manually :)"
+        ForegroundColor = "Black"
+        BackgroundColor = "Green"
+    }
+}
+catch {
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - Composer failed to download, try later :("
+        ForegroundColor = "Black"
+        BackgroundColor = "Red"
+    }
+}
+#endregion
+
+#region SETUP CMDER
+try {
+    if (Test-Path -Path "$downloadPath\Cmder" -PathType Container) {
+        Write-Host "The directory "$downloadPath\Cmder" already exists !!"
+        $response = Prompt-YesOrNoWithDefault -message "Do you want to proceed?"
+        if ($response -eq "yes" -or $response -eq "y") {
+            # GARBAGE COLLECTION =====================================
+            Remove-Item -Path "$downloadPath\Cmder" -Recurse -Force
+            $WhatWasDoneMessages = Setup-Cmder -downloadPath $downloadPath -WhatWasDoneMessages $WhatWasDoneMessages
+        }
+    } else {
+        $WhatWasDoneMessages = Setup-Cmder -downloadPath $downloadPath -WhatWasDoneMessages $WhatWasDoneMessages
+    }
+}
+catch {
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - Issue with downloading/installing cmder :("
+        ForegroundColor = "Black"
+        BackgroundColor = "Red"
+    }
 }
 #endregion
 
@@ -131,10 +170,18 @@ try {
         $fileName = Split-Path $url -Leaf
         Download-File -url $url -output "$downloadPath\fonts\$fileName"
     }
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - Fonts downloaded successfully :)`n"
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - Fonts downloaded successfully :)"
+        ForegroundColor = "Black"
+        BackgroundColor = "Green"
+    }
 }
 catch {
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - Fonts failed to download :(`n"
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - Fonts failed to download :("
+        ForegroundColor = "Black"
+        BackgroundColor = "Red"
+    }
 }
 #endregion
 
@@ -178,10 +225,18 @@ try {
         Add-Env-Variable -newVariableName $phpEnvVarName -newVariableValue "$downloadPath\$personalEnvPath\php\$fileName" -updatePath 0
     }
     Remove-Item -Path "$downloadPath\$personalEnvPath\zip" -Recurse -Force
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - PHP versions downloaded & setup successfully :)`n"
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - PHP versions downloaded & setup successfully :)"
+        ForegroundColor = "Black"
+        BackgroundColor = "Green"
+    }
 }
 catch {
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - PHP versions failed to download/setup :(`n"
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - PHP versions failed to download/setup :("
+        ForegroundColor = "Black"
+        BackgroundColor = "Red"
+    }
 }
 #endregion
 
@@ -265,10 +320,18 @@ try {
         }
         Download-File -url $url -output $outputPathXdebug
     }
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - XDEBUG versions downloaded & setup successfully :)`n"
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - XDEBUG versions downloaded & setup successfully :)"
+        ForegroundColor = "Black"
+        BackgroundColor = "Green"
+    }
 }
 catch {
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - XDEBUG versions failed to download/setup :(`n"
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - XDEBUG versions failed to download/setup :("
+        ForegroundColor = "Black"
+        BackgroundColor = "Red"
+    }
 }
 #endregion
 
@@ -278,10 +341,18 @@ try {
     Write-Host "`nDownloading NVM executable..."
     $nvmUrl = "https://github.com/coreybutler/nvm-windows/releases/download/1.1.12/nvm-setup.exe"
     Download-File -url $nvmUrl -output "$downloadPath\nvm-setup.exe"
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - NVM was downloaded successfully, you need to install it manually :)`n"
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - NVM was downloaded successfully, you need to install it manually :)"
+        ForegroundColor = "Black"
+        BackgroundColor = "Green"
+    }
 }
 catch {
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - NVM failed to download, try later :(`n"
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - NVM failed to download, try later :("
+        ForegroundColor = "Black"
+        BackgroundColor = "Red"
+    }
 }
 #endregion
 
@@ -290,15 +361,23 @@ try {
     Write-Host "`nDownloading and installing Chocolatey..."
     Set-ExecutionPolicy Bypass -Scope Process -Force
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString("https://chocolatey.org/install.ps1"))
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - Chocolatey was installed successfully :)`n"
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - Chocolatey was installed successfully :)"
+        ForegroundColor = "Black"
+        BackgroundColor = "Green"
+    }
 }
 catch {
-    $WhatWasDoneMessage = "$WhatWasDoneMessage    - Chocolatey failed to install, try later :(`n"
+    $WhatWasDoneMessages += [PSCustomObject]@{
+        Message = "    - Chocolatey failed to install, try later :("
+        ForegroundColor = "Black"
+        BackgroundColor = "Red"
+    }
 }
 #endregion
 
 #region WHAT TO DO NEXT
-What-ToDo-Next -stepsResult $WhatWasDoneMessage
+What-ToDo-Next -WhatWasDoneMessages $WhatWasDoneMessages
 #endregion
 
 Write-Host "`nAll tasks completed.`n`n"

@@ -80,17 +80,20 @@ function Update-Path-Env-Variable {
 }
 
 function What-ToDo-Next {
-    param( [string]$stepsResult="" )
-    if (-not($stepsResult -eq "" -or $stepsResult -eq "`n")) {
+    param( [PSCustomObject]$WhatWasDoneMessages = @() )
+
+    if ($WhatWasDoneMessages.Count -gt 0) {
         Write-Host "=========================================================================================="
         Write-Host "`n  # Results :"
-        Write-Host "$WhatWasDoneMessage"
+        foreach ($msg in $WhatWasDoneMessages) {
+            Write-Host $msg.Message -ForegroundColor $msg.ForegroundColor -BackgroundColor $msg.BackgroundColor
+        }
     }
     Write-Host "=========================================================================================="
     Write-Host "|| # TODOs :                                                                            ||"
-    Write-Host "||  - Run to check for any updates : > clink update                                     ||"
-    Write-Host "||  - Install downloaded font and Add it to cmder settings.                             ||"
+    Write-Host "||  - Start cmder and Run to check for any updates : > clink update                     ||"
     Write-Host "||  - Start cmder and Run 'flexprompt configure' to customize the prompt style.         ||"
+    Write-Host "||  - Install downloaded font and Add it to cmder settings.                             ||"
     Write-Host "||  - Run ./followup.ps1 for additional cmder configuration                             ||"
     Write-Host "=========================================================================================="
 }
