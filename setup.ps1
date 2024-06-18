@@ -6,7 +6,7 @@
 # Set the download paths
 $downloadPath = Prompt-Quesiton -message "Indicate the target directory (C:\[Container])"
 $downloadPath = "C:\$downloadPath"
-$personalEnvPath = Prompt-Quesiton -message "Indicate the personal env path directory (D:\[env])"
+$personalEnvPath = Prompt-Quesiton -message "Indicate the personal env path directory (C:\[Container]\[env])"
 # $personalEnvPath = "D:\$personalEnvPath" 
 
 # Create the download directory if it doesn't exist
