@@ -177,7 +177,6 @@ try {
         $phpEnvVarName = "php$phpEnvVarName"
         Add-Env-Variable -newVariableName $phpEnvVarName -newVariableValue "$downloadPath\$personalEnvPath\php\$fileName" -updatePath 0
     }
-    Add-Env-Variable -newVariableName "php_now" -newVariableValue "$downloadPath\$personalEnvPath\php\$fileName" -updatePath 1
     Remove-Item -Path "$downloadPath\$personalEnvPath\zip" -Recurse -Force
     $WhatWasDoneMessage = "$WhatWasDoneMessage    - PHP versions downloaded & setup successfully :)`n"
 }
