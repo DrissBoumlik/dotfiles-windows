@@ -36,12 +36,12 @@ function Setup-Cmder {
     Remove-Item "$downloadPath\z.zip", "$downloadPath\z.lua-master" -Recurse
     #endregion
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - Cmder\vendor\git-for-windows\usr\bin and Cmder\vendor\bin were added to the PATH variable"
+        Message = "- Cmder\vendor\git-for-windows\usr\bin and Cmder\vendor\bin were added to the PATH variable"
         ForegroundColor = "Black"
         BackgroundColor = "Green"
     }
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - Cmder was successfully setup with (flexprompt, and z) :)"
+        Message = "- Cmder was successfully setup with (flexprompt, and z) :)"
         ForegroundColor = "Black"
         BackgroundColor = "Green"
     }
@@ -69,14 +69,14 @@ try {
     $gitUrl = "https://github.com/git-for-windows/git/releases/download/v2.45.2.windows.1/Git-2.45.2-64-bit.exe"
     Download-File -url $gitUrl -output "$downloadPath\1-Git-2.45.2-64-bit.exe"
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - Git was downloaded successfully, you need to install it manually :)"
+        Message = "- Git was downloaded successfully, you need to install it manually :)"
         ForegroundColor = "Black"
         BackgroundColor = "Green"
     }
 }
 catch {
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - Git failed to download, try later :("
+        Message = "- Git failed to download, try later :("
         ForegroundColor = "Black"
         BackgroundColor = "Red"
     }
@@ -89,14 +89,14 @@ try {
     $XamppUrl = "https://deac-fra.dl.sourceforge.net/project/xampp/XAMPP%20Windows/8.2.12/xampp-windows-x64-8.2.12-0-VS16-installer.exe?viasf=1"
     Download-File -url $XamppUrl -output "$downloadPath\2-xampp-windows-x64-8.2.12-0-VS16-installer.exe"
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - Xampp was downloaded successfully, you need to install it manually :)"
+        Message = "- Xampp was downloaded successfully, you need to install it manually :)"
         ForegroundColor = "Black"
         BackgroundColor = "Green"
     }
 }
 catch {
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - Xampp failed to download, try later :("
+        Message = "- Xampp failed to download, try later :("
         ForegroundColor = "Black"
         BackgroundColor = "Red"
     }
@@ -114,14 +114,14 @@ try {
     Update-Path-Env-Variable -newVariableName "$downloadPath\composer\v1" -isVarName 0
 
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - Composer was downloaded successfully, you need to install it manually :)"
+        Message = "- Composer was downloaded successfully, you need to install it manually :)"
         ForegroundColor = "Black"
         BackgroundColor = "Green"
     }
 }
 catch {
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - Composer failed to download, try later :("
+        Message = "- Composer failed to download, try later :("
         ForegroundColor = "Black"
         BackgroundColor = "Red"
     }
@@ -144,7 +144,7 @@ try {
 }
 catch {
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - Issue with downloading/installing cmder :("
+        Message = "- Issue with downloading/installing cmder :("
         ForegroundColor = "Black"
         BackgroundColor = "Red"
     }
@@ -171,14 +171,14 @@ try {
         Download-File -url $url -output "$downloadPath\fonts\$fileName"
     }
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - Fonts downloaded successfully :)"
+        Message = "- Fonts downloaded successfully :)"
         ForegroundColor = "Black"
         BackgroundColor = "Green"
     }
 }
 catch {
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - Fonts failed to download :("
+        Message = "- Fonts failed to download :("
         ForegroundColor = "Black"
         BackgroundColor = "Red"
     }
@@ -226,14 +226,14 @@ try {
     }
     Remove-Item -Path "$downloadPath\$personalEnvPath\zip" -Recurse -Force
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - PHP versions downloaded & setup successfully :)"
+        Message = "- PHP versions downloaded & setup successfully :)"
         ForegroundColor = "Black"
         BackgroundColor = "Green"
     }
 }
 catch {
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - PHP versions failed to download/setup :("
+        Message = "- PHP versions failed to download/setup :("
         ForegroundColor = "Black"
         BackgroundColor = "Red"
     }
@@ -321,14 +321,14 @@ try {
         Download-File -url $url -output $outputPathXdebug
     }
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - XDEBUG versions downloaded & setup successfully :)"
+        Message = "- XDEBUG versions downloaded & setup successfully :)"
         ForegroundColor = "Black"
         BackgroundColor = "Green"
     }
 }
 catch {
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - XDEBUG versions failed to download/setup :("
+        Message = "- XDEBUG versions failed to download/setup :("
         ForegroundColor = "Black"
         BackgroundColor = "Red"
     }
@@ -342,14 +342,14 @@ try {
     $nvmUrl = "https://github.com/coreybutler/nvm-windows/releases/download/1.1.12/nvm-setup.exe"
     Download-File -url $nvmUrl -output "$downloadPath\nvm-setup.exe"
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - NVM was downloaded successfully, you need to install it manually :)"
+        Message = "- NVM was downloaded successfully, you need to install it manually :)"
         ForegroundColor = "Black"
         BackgroundColor = "Green"
     }
 }
 catch {
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - NVM failed to download, try later :("
+        Message = "- NVM failed to download, try later :("
         ForegroundColor = "Black"
         BackgroundColor = "Red"
     }
@@ -362,14 +362,14 @@ try {
     Set-ExecutionPolicy Bypass -Scope Process -Force
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString("https://chocolatey.org/install.ps1"))
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - Chocolatey was installed successfully :)"
+        Message = "- Chocolatey was installed successfully :)"
         ForegroundColor = "Black"
         BackgroundColor = "Green"
     }
 }
 catch {
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "    - Chocolatey failed to install, try later :("
+        Message = "- Chocolatey failed to install, try later :("
         ForegroundColor = "Black"
         BackgroundColor = "Red"
     }

@@ -86,7 +86,8 @@ function What-ToDo-Next {
         Write-Host "=========================================================================================="
         Write-Host "`n  # Results :"
         foreach ($msg in $WhatWasDoneMessages) {
-            Write-Host $msg.Message -ForegroundColor $msg.ForegroundColor -BackgroundColor $msg.BackgroundColor
+            $message = $msg.Message
+            Write-Host "    $message" -ForegroundColor $msg.ForegroundColor -BackgroundColor $msg.BackgroundColor
         }
     }
     Write-Host "=========================================================================================="
