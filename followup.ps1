@@ -8,9 +8,9 @@ if ($response -eq "yes" -or $response -eq "y") {
     $downloadPath = "C:\$downloadPath"
     Copy-Item -Path "$PWD\config\ConEmu.xml" -Destination "$downloadPath\Cmder\vendor\conemu-maximus5\ConEmu.xml" 
     Get-Content -Path "$PWD\config\user_aliases.cmd" | Add-Content -Path "$downloadPath\Cmder\config\user_aliases.cmd"
-        Write-Host "`nConEmu.xml & user_aliases.cmd were added to Cmder successfully :)"
+        Write-Host "`n- ConEmu.xml & user_aliases.cmd were added to Cmder successfully :)" -ForegroundColor Black -BackgroundColor Green
 } else {
-    Write-Host "You should start cmder before continuing..."
+    Write-Host "`n- You should start cmder before continuing..." -ForegroundColor Black -BackgroundColor Yellow
 }
 #endregion
 
@@ -22,12 +22,12 @@ if ($response -eq "yes" -or $response -eq "y") {
         $xamppPath = ($directories | Select-Object -First 1).FullName
         Add-Env-Variable -newVariableName "phpxmp" -newVariableValue "$xamppPath\php" -updatePath 0
         Add-Env-Variable -newVariableName "php_now" -newVariableValue "$xamppPath\php" -updatePath 1
-        Write-Host "`nThe 'php_now' & 'phpxmp' variables were successfully added to the PATH :)"
+        Write-Host "`nThe 'php_now' & 'phpxmp' variables were successfully added to the PATH :)" -ForegroundColor Black -BackgroundColor Green
     } else {
-        Write-Host "No XAMPP directories found. :("
+        Write-Host "`nNo XAMPP directories found. :(" -ForegroundColor Black -BackgroundColor Yellow
     }
 } else {
-    Write-Host "You should install Xampp & Composer before continuing..."
+    Write-Host "`nYou should install Xampp & Composer before continuing..." -ForegroundColor Black -BackgroundColor Yellow
     exit
 }
 #endregion
