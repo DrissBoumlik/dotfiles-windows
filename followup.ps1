@@ -4,7 +4,7 @@
 #region COPY CMDER CONFIG & ALIASES
 $response = Prompt-YesOrNoWithDefault -message "Did you already start cmder?"
 if ($response -eq "yes" -or $response -eq "y") {
-    $downloadPath = Prompt-Quesiton -message "Indicate the target directory (C:\[Container])"
+    $downloadPath = Prompt-Quesiton -message "`nIndicate the target directory (C:\[Container])"
     $downloadPath = "C:\$downloadPath"
     Copy-Item -Path "$PWD\config\ConEmu.xml" -Destination "$downloadPath\Cmder\vendor\conemu-maximus5\ConEmu.xml" 
     Get-Content -Path "$PWD\config\user_aliases.cmd" | Add-Content -Path "$downloadPath\Cmder\config\user_aliases.cmd"
@@ -15,7 +15,7 @@ if ($response -eq "yes" -or $response -eq "y") {
 #endregion
 
 #region ADD PHP ENVIRONMENT VARIABLE TO THE PATH
-$response = Prompt-YesOrNoWithDefault -message "Did you already install Xampp & Composer?"
+$response = Prompt-YesOrNoWithDefault -message "`nDid you already install Xampp & Composer?"
 if ($response -eq "yes" -or $response -eq "y") {
     $directories = Get-ChildItem -Path "C:\" -Directory -ErrorAction SilentlyContinue -Force | Where-Object { $_.Name -match 'xampp' }
     if ($directories.Count -gt 0) {
