@@ -200,18 +200,17 @@ try {
         "https://windows.php.net/downloads/releases/archives/php-8.2.9-Win32-vs16-x64.zip",
         "https://windows.php.net/downloads/releases/php-8.3.8-Win32-vs16-x64.zip"
     )
+    $phpPaths = @()
     Make-Directory -path "$downloadPath\$personalEnvPath"
     Make-Directory -path "$downloadPath\$personalEnvPath\zip"
     Make-Directory -path "$downloadPath\$personalEnvPath\php"
-    $phpIndex = -1
-    $phpEnvVarName = ""
     foreach ($url in $phpUrls) {
-        $fileName = Split-Path $url -Leaf
-        $fileName = $fileName -replace ".zip", ""
-        Download-File -url $url -output "$downloadPath\$personalEnvPath\zip\$fileName"
-        Extract-Zip -zipPath "$downloadPath\$personalEnvPath\zip\$fileName" -extractPath "$downloadPath\$personalEnvPath\php\$fileName"
-        $phpEnvVarName = $phpIndex
-        $phpIndex--
+        $fileNameZip = Split-Path $url -Leaf
+        $fileName = $fileNameZip -replace ".zip", ""
+        Download-File -url $url -output "$downloadPath\$personalEnvPath\zip\$fileNameZip"
+        Extract-Zip -zipPath "$downloadPath\$personalEnvPath\zip\$fileNameZip" -extractPath "$downloadPath\$personalEnvPath\php\$fileName"
+        $phpPaths += "$downloadPath\$personalEnvPath\php\$fileName"
+        Copy-Item -Path "$downloadPath\$personalEnvPath\php\$fileName\php.ini-development" -Destination "$downloadPath\$personalEnvPath\php\$fileName\php.ini"
         if ($fileName -match "php-(\d+)\.(\d+)\.") {
             $majorVersion = $matches[1]
             $minorVersion = $matches[2]
@@ -220,9 +219,9 @@ try {
             } else {
                 $phpEnvVarName = "$majorVersion$minorVersion"
             }
+            $phpEnvVarName = "php$phpEnvVarName"
+            Add-Env-Variable -newVariableName $phpEnvVarName -newVariableValue "$downloadPath\$personalEnvPath\php\$fileName" -updatePath 0
         }
-        $phpEnvVarName = "php$phpEnvVarName"
-        Add-Env-Variable -newVariableName $phpEnvVarName -newVariableValue "$downloadPath\$personalEnvPath\php\$fileName" -updatePath 0
     }
     Remove-Item -Path "$downloadPath\$personalEnvPath\zip" -Recurse -Force
     $WhatWasDoneMessages += [PSCustomObject]@{
@@ -309,16 +308,48 @@ try {
         "https://xdebug.org/files/php_xdebug-2.3.0-5.6-vc11-x86_64.dll"
     )
     Make-Directory -path "$downloadPath\$personalEnvPath\xdebug"
+    $phpVersionsWithXdebug = @()
     foreach ($url in $xdebugUrls) {
         $fileName = Split-Path $url -Leaf
-        $outputPathXdebug = "$downloadPath\$personalEnvPath\xdebug\$fileName"
         if ($fileName -match "-(\d+\.\d+)-(vs|vc)") {
             $phpVersion = $matches[1]
             $phpVersionDir = "$downloadPath\$personalEnvPath\xdebug\$phpVersion"
             Make-Directory -path $phpVersionDir
             $outputPathXdebug = "$downloadPath\$personalEnvPath\xdebug\$phpVersion\$fileName"
+            Download-File -url $url -output $outputPathXdebug
+
+            $multilineString = @"
+
+                [xdebug]
+                zend_extension="$outputPathXdebug"
+                xdebug.remote_enable=1
+                xdebug.remote_host=127.0.0.1
+                xdebug.remote_port=9000
+"@
+            if ($fileName -match "php_xdebug-([\d\.]+)") {
+                $xDebugVersion = $matches[1]
+                if ($xDebugVersion -like "3.*") {
+                    $multilineString = @"
+
+                        [xdebug]
+                        zend_extension="$outputPathXdebug"
+                        xdebug.mode=debug
+                        xdebug.client_host=127.0.0.1
+                        xdebug.client_port=9003
+"@
+                }
+            }
+
+            foreach ($phpPath in $phpPaths) {
+                if ($phpPath -like "*$phpVersion*") {
+                    if (-not($phpVersionsWithXdebug -contains $phpVersion)) {
+                        $phpVersionsWithXdebug += $phpVersion
+                        $multilineString = $multilineString -replace "\ +"
+                        Add-Content -Path "$phpPath\php.ini" -Value $multilineString
+                    }
+                }
+            }
         }
-        Download-File -url $url -output $outputPathXdebug
     }
     $WhatWasDoneMessages += [PSCustomObject]@{
         Message = "- XDEBUG versions downloaded & setup successfully :)"
