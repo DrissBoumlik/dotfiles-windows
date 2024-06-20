@@ -22,7 +22,8 @@ if ($response -eq "yes" -or $response -eq "y") {
         $xamppPath = ($directories | Select-Object -First 1).FullName
         Add-Env-Variable -newVariableName "phpxmp" -newVariableValue "$xamppPath\php" -updatePath 0
         Add-Env-Variable -newVariableName "php_now" -newVariableValue "$xamppPath\php" -updatePath 1
-        Write-Host "`nThe 'php_now' & 'phpxmp' variables were successfully added to the PATH :)" -ForegroundColor Black -BackgroundColor Green
+        Add-Env-Variable -newVariableName "mysql_stuff" -newVariableValue "$xamppPath\mysql\bin" -updatePath 1
+        Write-Host "`nThe 'php_now', 'mysql_stuff' & 'phpxmp' variables were successfully added to the PATH :)" -ForegroundColor Black -BackgroundColor Green
     } else {
         Write-Host "`nNo XAMPP directories found. :(" -ForegroundColor Black -BackgroundColor Yellow
     }
