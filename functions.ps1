@@ -138,23 +138,24 @@ function What-ToDo-Next {
     param( [PSCustomObject]$WhatWasDoneMessages = @(), [PSCustomObject]$WhatToDoNext = @() )
 
     if ($WhatWasDoneMessages.Count -gt 0) {
-        Write-Host "=========================================================================================="
-        Write-Host "`n  # Results :"
+        Write-Host "`n==========================================================================================`n"
+        Write-Host "   # Results :"
         foreach ($msg in $WhatWasDoneMessages) {
             $message = $msg.Message
-            Write-Host "    $message" -ForegroundColor $msg.ForegroundColor -BackgroundColor $msg.BackgroundColor
+            Write-Host "    $message " -ForegroundColor $msg.ForegroundColor -BackgroundColor $msg.BackgroundColor
         }
     }
-    Write-Host "=========================================================================================="
-    Write-Host "|| # TODOs :                                                                            ||"
+    Write-Host "`n==========================================================================================`n"
+    Write-Host "   # TODOs :"
     
     if ($WhatToDoNext.Count -gt 0) {
         foreach ($msg in $WhatToDoNext) {
             $message = $msg.Message
-            Write-Host $message -ForegroundColor $msg.ForegroundColor -BackgroundColor $msg.BackgroundColor
+            Write-Host "    $message " -ForegroundColor $msg.ForegroundColor -BackgroundColor $msg.BackgroundColor
         }
     }
     
-    Write-Host "||  - Run ./followup.ps1 when you're done for additional cmder configuration            ||"
-    Write-Host "=========================================================================================="
+    Write-Host "    - Run ./followup.ps1 when you're done for additional cmder configuration"
+    Write-Host "`n==========================================================================================`n"
+    Write-Host "`nAll tasks completed.`n`n"
 }

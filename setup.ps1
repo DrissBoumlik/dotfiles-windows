@@ -21,10 +21,19 @@ foreach ($key in $StepsQuestions.Keys) {
 }
 #endregion
 
+$WhatWasDoneMessages = @()
+$WhatToDoNext = @()
+
 #region SETUP THE CONTAINER DIRECTORY
 # Set the download paths
-$downloadPath = Prompt-Quesiton -message "Indicate the target directory (C:\[Container])"
+$downloadPath = Prompt-Quesiton -message "`nIndicate the target directory (C:\[Container])"
 $downloadPath = "C:\$downloadPath"
+
+$WhatToDoNext += [PSCustomObject]@{
+    Message = "- Your container path is '$downloadPath'"
+    ForegroundColor = "Black"
+    BackgroundColor = "Gray"
+}
 
 # Create the download directory if it doesn't exist
 if (!(Test-Path -Path $downloadPath)) {
@@ -32,8 +41,6 @@ if (!(Test-Path -Path $downloadPath)) {
 }
 #endregion
 
-$WhatWasDoneMessages = @()
-$WhatToDoNext = @()
 
 #region DOWNLOAD GIT
 if ($StepsQuestions["GIT"].Answer -eq "yes") {
@@ -162,12 +169,12 @@ if ($StepsQuestions["CMDER"].Answer -eq "yes") {
             $WhatWasDoneMessages = Setup-Cmder -downloadPath $downloadPath -WhatWasDoneMessages $WhatWasDoneMessages
         }
         $WhatToDoNext += [PSCustomObject]@{
-            Message = "||  - Start cmder and Run to check for any updates : > clink update                     ||"
+            Message = "- Start cmder and Run to check for any updates : > clink update                     "
             ForegroundColor = "Black"
             BackgroundColor = "Gray"
         }
         $WhatToDoNext += [PSCustomObject]@{
-            Message = "||  - Start cmder and Run 'flexprompt configure' to customize the prompt style.         ||"
+            Message = "- Start cmder and Run 'flexprompt configure' to customize the prompt style.         "
             ForegroundColor = "Black"
             BackgroundColor = "Gray"
         }
@@ -208,7 +215,7 @@ if ($StepsQuestions["FONTS"].Answer -eq "yes") {
             BackgroundColor = "Green"
         }
         $WhatToDoNext += [PSCustomObject]@{
-            Message = "||  - Install downloaded font and Add it to cmder settings.                             ||"
+            Message = "- Install downloaded font and Add it to cmder settings.                             "
             ForegroundColor = "Black"
             BackgroundColor = "Gray"
         }
@@ -275,6 +282,11 @@ if ($StepsQuestions["PHP"].Answer -eq "yes") {
             Message = "- PHP versions downloaded & setup successfully :)"
             ForegroundColor = "Black"
             BackgroundColor = "Green"
+        }
+        $WhatToDoNext += [PSCustomObject]@{
+            Message = "- Your PHP path is '$downloadPath\env\php'"
+            ForegroundColor = "Black"
+            BackgroundColor = "Gray"
         }
     }
     catch {
@@ -409,6 +421,11 @@ if ($StepsQuestions["XDEBUG"].Answer -eq "yes") {
             ForegroundColor = "Black"
             BackgroundColor = "Green"
         }
+        $WhatToDoNext += [PSCustomObject]@{
+            Message = "- Your XDebug path is '$downloadPath\env\xdebug'"
+            ForegroundColor = "Black"
+            BackgroundColor = "Gray"
+        }
     }
     catch {
         $WhatWasDoneMessages += [PSCustomObject]@{
@@ -423,5 +440,3 @@ if ($StepsQuestions["XDEBUG"].Answer -eq "yes") {
 #region WHAT TO DO NEXT
 What-ToDo-Next -WhatWasDoneMessages $WhatWasDoneMessages -WhatToDoNext $WhatToDoNext
 #endregion
-
-Write-Host "`nAll tasks completed.`n`n"
