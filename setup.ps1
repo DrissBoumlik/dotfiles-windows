@@ -1,55 +1,9 @@
 
 . ./functions.ps1
 
-function Setup-Cmder {
-    param ( [string]$downloadPath, [PSCustomObject]$WhatWasDoneMessages = @() )
-    #region DOWNLOAD CMDER
-    Write-Host "`nDownloading & Extracting Cmder..."
-    $cmderUrl = "https://github.com/cmderdev/cmder/releases/download/v1.3.25/cmder.zip"
-    # $cmderUrl = "https://github.com/cmderdev/cmder/releases/download/v1.3.20/cmder_mini.zip" # TESTING
-    Download-File -url $cmderUrl -output "$downloadPath\Cmder.zip"
-
-    Extract-Zip -zipPath "$downloadPath\Cmder.zip" -extractPath "$downloadPath\Cmder"
-    Remove-Item "$downloadPath\Cmder.zip"
-
-    Add-Env-Variable -newVariableName "linux_cmd" -newVariableValue "$downloadPath\Cmder\vendor\git-for-windows\usr\bin;$downloadPath\Cmder\vendor\bin" -updatePath 1
-    #endregion
-
-    #region DOWNLOAD & SETUP FLEXPROMPT
-    Write-Host "`nDownloading & Extracting FlexPrompt..."
-    # $flexPromptUrl = "https://github.com/AmrEldib/cmder-powerline-prompt/archive/master.zip"
-    $flexPromptUrl = "https://github.com/chrisant996/clink-flex-prompt/releases/download/v0.17/clink-flex-prompt-0.17.zip"
-    Download-File -url $flexPromptUrl -output "$downloadPath\flexprompt.zip"
-
-    Extract-Zip -zipPath "$downloadPath\flexprompt.zip" -extractPath "$downloadPath\Cmder\config"
-    Copy-Item -Path "$PWD\config\flexprompt_autoconfig.lua" -Destination "$downloadPath\Cmder\config"
-    Remove-Item "$downloadPath\flexprompt.zip"
-    #endregion
-
-    #region DOWNLOAD & SETUP Z
-    Write-Host "`nDownloading & Extracting Z..."
-    $zUrl = "https://github.com/skywind3000/z.lua/archive/refs/heads/master.zip"
-    Download-File -url $zUrl -output "$downloadPath\z.zip"
-
-    Extract-Zip -zipPath "$downloadPath\z.zip" -extractPath $downloadPath
-    Copy-Item -Path "$downloadPath\z.lua-master\z.lua", "$downloadPath\z.lua-master\z.cmd" -Destination "$downloadPath\Cmder\vendor"
-    Remove-Item "$downloadPath\z.zip", "$downloadPath\z.lua-master" -Recurse
-    #endregion
-    $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "- Cmder\vendor\git-for-windows\usr\bin and Cmder\vendor\bin were added to the PATH variable"
-        ForegroundColor = "Black"
-        BackgroundColor = "Green"
-    }
-    $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "- Cmder was successfully setup with (flexprompt, and z) :)"
-        ForegroundColor = "Black"
-        BackgroundColor = "Green"
-    }
-    return $WhatWasDoneMessages
-}
 
 #region Answer Questions for which steps to execute
-$StepsQuestions = @{
+$StepsQuestions = [ordered]@{
    GIT = [PSCustomObject]@{ Question = "- Download Git ?"; Answer = "no" }
    XAMPP = [PSCustomObject]@{ Question = "- Download Xampp ?"; Answer = "no" }
    COMPOSER = [PSCustomObject]@{ Question = "- Download Composer ?"; Answer = "no" }
@@ -71,8 +25,7 @@ foreach ($key in $StepsQuestions.Keys) {
 # Set the download paths
 $downloadPath = Prompt-Quesiton -message "Indicate the target directory (C:\[Container])"
 $downloadPath = "C:\$downloadPath"
-$personalEnvPath = Prompt-Quesiton -message "Indicate the personal env path directory (C:\[Container]\[env])"
-# $personalEnvPath = "D:\$personalEnvPath" 
+$personalEnvPath = "env"
 
 # Create the download directory if it doesn't exist
 if (!(Test-Path -Path $downloadPath)) {
@@ -81,6 +34,7 @@ if (!(Test-Path -Path $downloadPath)) {
 #endregion
 
 $WhatWasDoneMessages = @()
+$WhatToDoNext = @()
 
 #region DOWNLOAD GIT
 if ($StepsQuestions["GIT"].Answer -eq "yes") {
@@ -132,10 +86,6 @@ if ($StepsQuestions["COMPOSER"].Answer -eq "yes") {
         Write-Host "`nDownloading Composer..."
         $composerUrl = "https://getcomposer.org/Composer-Setup.exe"
         Download-File -url $composerUrl -output "$downloadPath\3-Composer-Setup.exe"
-        
-        # Copy composer version 1 to the composer path
-        Copy-Item -Path "$PWD\composer-v1" -Destination "C:\composer\v1" -Recurse
-        Update-Path-Env-Variable -newVariableName "C:\composer\v1" -isVarName 0
 
         $WhatWasDoneMessages += [PSCustomObject]@{
             Message = "- Composer was downloaded successfully, you need to install it manually :)"
@@ -212,6 +162,16 @@ if ($StepsQuestions["CMDER"].Answer -eq "yes") {
         } else {
             $WhatWasDoneMessages = Setup-Cmder -downloadPath $downloadPath -WhatWasDoneMessages $WhatWasDoneMessages
         }
+        $WhatToDoNext += [PSCustomObject]@{
+            Message = "||  - Start cmder and Run to check for any updates : > clink update                     ||"
+            ForegroundColor = "Black"
+            BackgroundColor = "Gray"
+        }
+        $WhatToDoNext += [PSCustomObject]@{
+            Message = "||  - Start cmder and Run 'flexprompt configure' to customize the prompt style.         ||"
+            ForegroundColor = "Black"
+            BackgroundColor = "Gray"
+        }
     }
     catch {
         $WhatWasDoneMessages += [PSCustomObject]@{
@@ -247,6 +207,11 @@ if ($StepsQuestions["FONTS"].Answer -eq "yes") {
             Message = "- Fonts downloaded successfully :)"
             ForegroundColor = "Black"
             BackgroundColor = "Green"
+        }
+        $WhatToDoNext += [PSCustomObject]@{
+            Message = "||  - Install downloaded font and Add it to cmder settings.                             ||"
+            ForegroundColor = "Black"
+            BackgroundColor = "Gray"
         }
     }
     catch {
@@ -298,6 +263,16 @@ if ($StepsQuestions["PHP"].Answer -eq "yes") {
                 Add-Env-Variable -newVariableName $phpEnvVarName -newVariableValue "$downloadPath\$personalEnvPath\php\$fileName" -updatePath 0
             }
         }
+
+        $VcUrls = @(
+            "https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe",
+            "https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe"
+        )
+        foreach ($url in $VcUrls) {
+            $fileName = Split-Path $url -Leaf
+            Download-File -url $url -output "$downloadPath\$personalEnvPath\$fileName"
+        }
+
         Remove-Item -Path "$downloadPath\$personalEnvPath\zip" -Recurse -Force
         $WhatWasDoneMessages += [PSCustomObject]@{
             Message = "- PHP versions downloaded & setup successfully :)"
@@ -445,7 +420,7 @@ if ($StepsQuestions["XDEBUG"].Answer -eq "yes") {
 #endregion
 
 #region WHAT TO DO NEXT
-What-ToDo-Next -WhatWasDoneMessages $WhatWasDoneMessages
+What-ToDo-Next -WhatWasDoneMessages $WhatWasDoneMessages -WhatToDoNext $WhatToDoNext
 #endregion
 
 Write-Host "`nAll tasks completed.`n`n"
