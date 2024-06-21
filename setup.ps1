@@ -25,7 +25,6 @@ foreach ($key in $StepsQuestions.Keys) {
 # Set the download paths
 $downloadPath = Prompt-Quesiton -message "Indicate the target directory (C:\[Container])"
 $downloadPath = "C:\$downloadPath"
-$personalEnvPath = "env"
 
 # Create the download directory if it doesn't exist
 if (!(Test-Path -Path $downloadPath)) {
@@ -240,17 +239,15 @@ if ($StepsQuestions["PHP"].Answer -eq "yes") {
             "https://windows.php.net/downloads/releases/archives/php-8.2.9-Win32-vs16-x64.zip",
             "https://windows.php.net/downloads/releases/php-8.3.8-Win32-vs16-x64.zip"
         )
-        $phpPaths = @()
-        Make-Directory -path "$downloadPath\$personalEnvPath"
-        Make-Directory -path "$downloadPath\$personalEnvPath\zip"
-        Make-Directory -path "$downloadPath\$personalEnvPath\php"
+        Make-Directory -path "$downloadPath\env"
+        Make-Directory -path "$downloadPath\env\zip"
+        Make-Directory -path "$downloadPath\env\php"
         foreach ($url in $phpUrls) {
             $fileNameZip = Split-Path $url -Leaf
             $fileName = $fileNameZip -replace ".zip", ""
-            Download-File -url $url -output "$downloadPath\$personalEnvPath\zip\$fileNameZip"
-            Extract-Zip -zipPath "$downloadPath\$personalEnvPath\zip\$fileNameZip" -extractPath "$downloadPath\$personalEnvPath\php\$fileName"
-            $phpPaths += "$downloadPath\$personalEnvPath\php\$fileName"
-            Copy-Item -Path "$downloadPath\$personalEnvPath\php\$fileName\php.ini-development" -Destination "$downloadPath\$personalEnvPath\php\$fileName\php.ini"
+            Download-File -url $url -output "$downloadPath\env\zip\$fileNameZip"
+            Extract-Zip -zipPath "$downloadPath\env\zip\$fileNameZip" -extractPath "$downloadPath\env\php\$fileName"
+            Copy-Item -Path "$downloadPath\env\php\$fileName\php.ini-development" -Destination "$downloadPath\env\php\$fileName\php.ini"
             if ($fileName -match "php-(\d+)\.(\d+)\.") {
                 $majorVersion = $matches[1]
                 $minorVersion = $matches[2]
@@ -260,7 +257,7 @@ if ($StepsQuestions["PHP"].Answer -eq "yes") {
                     $phpEnvVarName = "$majorVersion$minorVersion"
                 }
                 $phpEnvVarName = "php$phpEnvVarName"
-                Add-Env-Variable -newVariableName $phpEnvVarName -newVariableValue "$downloadPath\$personalEnvPath\php\$fileName" -updatePath 0
+                Add-Env-Variable -newVariableName $phpEnvVarName -newVariableValue "$downloadPath\env\php\$fileName" -updatePath 0
             }
         }
 
@@ -270,10 +267,10 @@ if ($StepsQuestions["PHP"].Answer -eq "yes") {
         )
         foreach ($url in $VcUrls) {
             $fileName = Split-Path $url -Leaf
-            Download-File -url $url -output "$downloadPath\$personalEnvPath\$fileName"
+            Download-File -url $url -output "$downloadPath\env\$fileName"
         }
 
-        Remove-Item -Path "$downloadPath\$personalEnvPath\zip" -Recurse -Force
+        Remove-Item -Path "$downloadPath\env\zip" -Recurse -Force
         $WhatWasDoneMessages += [PSCustomObject]@{
             Message = "- PHP versions downloaded & setup successfully :)"
             ForegroundColor = "Black"
@@ -359,17 +356,19 @@ if ($StepsQuestions["XDEBUG"].Answer -eq "yes") {
             "https://xdebug.org/files/php_xdebug-2.3.1-5.6-vc11-x86_64.dll",
             "https://xdebug.org/files/php_xdebug-2.3.0-5.6-vc11-x86_64.dll"
         )
-        Make-Directory -path "$downloadPath\$personalEnvPath\xdebug"
+        Make-Directory -path "$downloadPath\env"
+        Make-Directory -path "$downloadPath\env\xdebug"
         $phpVersionsWithXdebug = @()
         foreach ($url in $xdebugUrls) {
             $fileName = Split-Path $url -Leaf
             if ($fileName -match "-(\d+\.\d+)-(vs|vc)") {
                 $phpVersion = $matches[1]
-                Make-Directory -path "$downloadPath\$personalEnvPath\xdebug\$phpVersion"
-                $outputPathXdebug = "$downloadPath\$personalEnvPath\xdebug\$phpVersion\$fileName"
+                Make-Directory -path "$downloadPath\env\xdebug\$phpVersion"
+                $outputPathXdebug = "$downloadPath\env\xdebug\$phpVersion\$fileName"
                 Download-File -url $url -output $outputPathXdebug
 
-                if ($StepsQuestions["PHP"].Answer -eq "yes") {
+                $phpPaths = Get-ChildItem -Path "$downloadPath\env\php" -Directory | Select-Object -ExpandProperty Name
+                if ($phpPaths.Count -gt 0) {
                     $xDebugConfig = @"
 
                     [xdebug]
@@ -397,7 +396,7 @@ if ($StepsQuestions["XDEBUG"].Answer -eq "yes") {
                             if (-not($phpVersionsWithXdebug -contains $phpVersion)) {
                                 $phpVersionsWithXdebug += $phpVersion
                                 $xDebugConfig = $xDebugConfig -replace "\ +"
-                                Add-Content -Path "$phpPath\php.ini" -Value $xDebugConfig
+                                Add-Content -Path "$downloadPath\env\php\$phpPath\php.ini" -Value $xDebugConfig
                                 break
                             }
                         }
