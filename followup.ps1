@@ -20,10 +20,15 @@ if ($response -eq "yes" -or $response -eq "y") {
     $directories = Get-ChildItem -Path "C:\" -Directory -ErrorAction SilentlyContinue -Force | Where-Object { $_.Name -match 'xampp' }
     if ($directories.Count -gt 0) {
         $xamppPath = ($directories | Select-Object -First 1).FullName
+        Update-Path-Env-Variable -variableName  "$xamppPath\php" -isVarName 0 -remove 1
         Add-Env-Variable -newVariableName "phpxmp" -newVariableValue "$xamppPath\php" -updatePath 0
         Add-Env-Variable -newVariableName "php_now" -newVariableValue "$xamppPath\php" -updatePath 1
         Add-Env-Variable -newVariableName "mysql_stuff" -newVariableValue "$xamppPath\mysql\bin" -updatePath 1
-        Write-Host "`nThe 'php_now', 'mysql_stuff' & 'phpxmp' variables were successfully added to the PATH :)" -ForegroundColor Black -BackgroundColor Green
+        # Copy composer version 1 to the composer path
+        Copy-Item -Path "$PWD\composer-v1" -Destination "C:\composer\v1" -Recurse
+        Update-Path-Env-Variable -variableName "C:\composer\v1" -isVarName 0
+
+        Write-Host "`nThe 'php_now', 'mysql_stuff' & 'phpxmp' 'composer1' variables were successfully added to the PATH :)" -ForegroundColor Black -BackgroundColor Green
     } else {
         Write-Host "`nNo XAMPP directories found. :(" -ForegroundColor Black -BackgroundColor Yellow
     }
