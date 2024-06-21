@@ -365,12 +365,12 @@ if ($StepsQuestions["XDEBUG"].Answer -eq "yes") {
             $fileName = Split-Path $url -Leaf
             if ($fileName -match "-(\d+\.\d+)-(vs|vc)") {
                 $phpVersion = $matches[1]
-                $phpVersionDir = "$downloadPath\$personalEnvPath\xdebug\$phpVersion"
-                Make-Directory -path $phpVersionDir
+                Make-Directory -path "$downloadPath\$personalEnvPath\xdebug\$phpVersion"
                 $outputPathXdebug = "$downloadPath\$personalEnvPath\xdebug\$phpVersion\$fileName"
                 Download-File -url $url -output $outputPathXdebug
 
-                $multilineString = @"
+                if ($StepsQuestions["PHP"].Answer -eq "yes") {
+                    $xDebugConfig = @"
 
                     [xdebug]
                     zend_extension="$outputPathXdebug"
@@ -378,26 +378,28 @@ if ($StepsQuestions["XDEBUG"].Answer -eq "yes") {
                     xdebug.remote_host=127.0.0.1
                     xdebug.remote_port=9000
 "@
-                if ($fileName -match "php_xdebug-([\d\.]+)") {
-                    $xDebugVersion = $matches[1]
-                    if ($xDebugVersion -like "3.*") {
-                        $multilineString = @"
+                    if ($fileName -match "php_xdebug-([\d\.]+)") {
+                        $xDebugVersion = $matches[1]
+                        if ($xDebugVersion -like "3.*") {
+                            $xDebugConfig = @"
 
-                            [xdebug]
-                            zend_extension="$outputPathXdebug"
-                            xdebug.mode=debug
-                            xdebug.client_host=127.0.0.1
-                            xdebug.client_port=9003
+                                [xdebug]
+                                zend_extension="$outputPathXdebug"
+                                xdebug.mode=debug
+                                xdebug.client_host=127.0.0.1
+                                xdebug.client_port=9003
 "@
+                        }
                     }
-                }
 
-                foreach ($phpPath in $phpPaths) {
-                    if ($phpPath -like "*$phpVersion*") {
-                        if (-not($phpVersionsWithXdebug -contains $phpVersion)) {
-                            $phpVersionsWithXdebug += $phpVersion
-                            $multilineString = $multilineString -replace "\ +"
-                            Add-Content -Path "$phpPath\php.ini" -Value $multilineString
+                    foreach ($phpPath in $phpPaths) {
+                        if ($phpPath -like "*$phpVersion*") {
+                            if (-not($phpVersionsWithXdebug -contains $phpVersion)) {
+                                $phpVersionsWithXdebug += $phpVersion
+                                $xDebugConfig = $xDebugConfig -replace "\ +"
+                                Add-Content -Path "$phpPath\php.ini" -Value $xDebugConfig
+                                break
+                            }
                         }
                     }
                 }
