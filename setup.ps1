@@ -2,6 +2,8 @@
 . ./functions.ps1
 
 
+Write-Host "`nThis will setup your env with (Git, Xampp, Composer, NVM, Chocolatey, Cmder, PHP, XDebug)`n"
+
 #region Answer Questions for which steps to execute
 $StepsQuestions = [ordered]@{
    GIT = [PSCustomObject]@{ Question = "- Download Git ?"; Answer = "no" }
@@ -25,7 +27,6 @@ $WhatWasDoneMessages = @()
 $WhatToDoNext = @()
 
 #region SETUP THE CONTAINER DIRECTORY
-# Set the download paths
 $downloadPath = Prompt-Quesiton -message "`nIndicate the target directory (C:\[Container])"
 $downloadPath = "C:\$downloadPath"
 

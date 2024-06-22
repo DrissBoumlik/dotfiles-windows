@@ -17,7 +17,15 @@ function Setup-Cmder {
     Extract-Zip -zipPath "$downloadPath\Cmder.zip" -extractPath "$downloadPath\Cmder"
     Remove-Item "$downloadPath\Cmder.zip"
 
-    Add-Env-Variable -newVariableName "linux_cmd" -newVariableValue "$downloadPath\Cmder\vendor\git-for-windows\usr\bin;$downloadPath\Cmder\vendor\bin" -updatePath 1
+    $cmderStuff = @(
+        "$downloadPath\Cmder\vendor\git-for-windows\usr\bin",
+        "$downloadPath\Cmder\vendor\bin",
+        "C:\Cmder\vendor",
+        "C:\Cmder\bin",
+        "C:\Cmder"
+    )
+    $cmderStuff = $cmderStuff -join ";"
+    Add-Env-Variable -newVariableName "cmder_stuff" -newVariableValue $cmderStuff -updatePath 1
     #endregion
 
     #region DOWNLOAD & SETUP FLEXPROMPT
@@ -40,13 +48,25 @@ function Setup-Cmder {
     Copy-Item -Path "$downloadPath\z.lua-master\z.lua", "$downloadPath\z.lua-master\z.cmd" -Destination "$downloadPath\Cmder\vendor"
     Remove-Item "$downloadPath\z.zip", "$downloadPath\z.lua-master" -Recurse
     #endregion
+    
+    #region DOWNLOAD & SETUP FZF
+    Write-Host "`nDownloading & Extracting FZF..."
+    $fzfUrl = "https://github.com/junegunn/fzf/releases/download/0.53.0/fzf-0.53.0-windows_amd64.zip"
+    Download-File -url $fzfUrl -output "$downloadPath\fzf.zip"
+
+    Extract-Zip -zipPath "$downloadPath\fzf.zip" -extractPath $downloadPath
+    Copy-Item -Path "$downloadPath\fzf.exe" -Destination "$downloadPath\Cmder\bin"
+    Copy-Item -Path "$downloadPath\fzf.exe" -Destination "$downloadPath\Cmder\vendor\bin"
+    Remove-Item "$downloadPath\fzf.zip", "$downloadPath\fzf.exe" -Recurse
+    #endregion
+    
     $WhatWasDoneMessages += [PSCustomObject]@{
         Message = "- Cmder\vendor\git-for-windows\usr\bin and Cmder\vendor\bin were added to the PATH variable"
         ForegroundColor = "Black"
         BackgroundColor = "Green"
     }
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "- Cmder was successfully setup with (flexprompt, and z) :)"
+        Message = "- Cmder was successfully setup with (flexprompt, fzf and z) :)"
         ForegroundColor = "Black"
         BackgroundColor = "Green"
     }
