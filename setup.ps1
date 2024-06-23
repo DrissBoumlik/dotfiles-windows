@@ -36,6 +36,8 @@ $WhatToDoNext += [PSCustomObject]@{
     BackgroundColor = "Gray"
 }
 
+$overrideExistingEnvVars = Prompt-YesOrNoWithDefault -message "`nWould you like to override the existing environment variables"
+
 # Create the download directory if it doesn't exist
 if (!(Test-Path -Path $downloadPath)) {
     New-Item -ItemType Directory -Force -Path $downloadPath
@@ -164,10 +166,10 @@ if ($StepsQuestions["CMDER"].Answer -eq "yes") {
             if ($response -eq "yes" -or $response -eq "y") {
                 # GARBAGE COLLECTION =====================================
                 Remove-Item -Path "$downloadPath\Cmder" -Recurse -Force
-                $WhatWasDoneMessages = Setup-Cmder -downloadPath $downloadPath -WhatWasDoneMessages $WhatWasDoneMessages
+                $WhatWasDoneMessages = Setup-Cmder -downloadPath $downloadPath -WhatWasDoneMessages $WhatWasDoneMessages -overrideExistingEnvVars $overrideExistingEnvVars
             }
         } else {
-            $WhatWasDoneMessages = Setup-Cmder -downloadPath $downloadPath -WhatWasDoneMessages $WhatWasDoneMessages
+            $WhatWasDoneMessages = Setup-Cmder -downloadPath $downloadPath -WhatWasDoneMessages $WhatWasDoneMessages -overrideExistingEnvVars $overrideExistingEnvVars
         }
         $WhatToDoNext += [PSCustomObject]@{
             Message = "- Start cmder and Run to check for any updates : > clink update                     "
@@ -265,7 +267,7 @@ if ($StepsQuestions["PHP"].Answer -eq "yes") {
                     $phpEnvVarName = "$majorVersion$minorVersion"
                 }
                 $phpEnvVarName = "php$phpEnvVarName"
-                Add-Env-Variable -newVariableName $phpEnvVarName -newVariableValue "$downloadPath\env\php\$fileName" -updatePath 0
+                Add-Env-Variable -newVariableName $phpEnvVarName -newVariableValue "$downloadPath\env\php\$fileName" -updatePath 0 -overrideExistingEnvVars $overrideExistingEnvVars
             }
         }
 

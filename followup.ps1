@@ -1,6 +1,8 @@
 
 . ./functions.ps1
 
+$overrideExistingEnvVars = Prompt-YesOrNoWithDefault -message "`nWould you like to override the existing environment variables"
+
 #region COPY CMDER CONFIG & ALIASES
 $response = Prompt-YesOrNoWithDefault -message "Did you already start cmder?"
 if ($response -eq "yes" -or $response -eq "y") {
@@ -21,9 +23,9 @@ if ($response -eq "yes" -or $response -eq "y") {
     if ($directories.Count -gt 0) {
         $xamppPath = ($directories | Select-Object -First 1).FullName
         Update-Path-Env-Variable -variableName  "$xamppPath\php" -isVarName 0 -remove 1
-        Add-Env-Variable -newVariableName "phpxmp" -newVariableValue "$xamppPath\php" -updatePath 0
-        Add-Env-Variable -newVariableName "php_now" -newVariableValue "$xamppPath\php" -updatePath 1
-        Add-Env-Variable -newVariableName "mysql_stuff" -newVariableValue "$xamppPath\mysql\bin" -updatePath 1
+        Add-Env-Variable -newVariableName "phpxmp" -newVariableValue "$xamppPath\php" -updatePath 0 -overrideExistingEnvVars $overrideExistingEnvVars
+        Add-Env-Variable -newVariableName "php_now" -newVariableValue "$xamppPath\php" -updatePath 1 -overrideExistingEnvVars $overrideExistingEnvVars
+        Add-Env-Variable -newVariableName "mysql_stuff" -newVariableValue "$xamppPath\mysql\bin" -updatePath 1 -overrideExistingEnvVars $overrideExistingEnvVars
         # Copy composer version 1 to the composer path
         Copy-Item -Path "$PWD\composer-v1" -Destination "C:\composer\v1" -Recurse
         Update-Path-Env-Variable -variableName "C:\composer\v1" -isVarName 0

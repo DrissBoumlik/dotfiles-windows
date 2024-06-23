@@ -1,5 +1,4 @@
 
-# Function to download a file
 $ProgressPreference = 'SilentlyContinue'
 function Download-File {
     param ( [string]$url, [string]$output )
@@ -7,7 +6,7 @@ function Download-File {
 }
 
 function Setup-Cmder {
-    param ( [string]$downloadPath, [PSCustomObject]$WhatWasDoneMessages = @() )
+    param ( [string]$downloadPath, [PSCustomObject]$WhatWasDoneMessages = @(), $overrideExistingEnvVars = "no" )
     #region DOWNLOAD CMDER
     Write-Host "`nDownloading & Extracting Cmder..."
     $cmderUrl = "https://github.com/cmderdev/cmder/releases/download/v1.3.25/cmder.zip"
@@ -25,7 +24,7 @@ function Setup-Cmder {
         "C:\Cmder"
     )
     $cmderStuff = $cmderStuff -join ";"
-    Add-Env-Variable -newVariableName "cmder_stuff" -newVariableValue $cmderStuff -updatePath 1
+    Add-Env-Variable -newVariableName "cmder_stuff" -newVariableValue $cmderStuff -updatePath 1 -overrideExistingEnvVars $overrideExistingEnvVars
     #endregion
 
     #region DOWNLOAD & SETUP FLEXPROMPT
@@ -81,14 +80,12 @@ function Make-Directory {
     }
 }
 
-# Function to extract a zip file
 function Extract-Zip {
     param ( [string]$zipPath, [string]$extractPath )
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     [System.IO.Compression.ZipFile]::ExtractToDirectory($zipPath, $extractPath)
 }
 
-# Function to prompt
 function Prompt-YesOrNoWithDefault {
     param(
         [string]$message = "Do you want to continue? (yes/no)",
@@ -121,13 +118,14 @@ function Prompt-Quesiton {
 }
 
 function Add-Env-Variable {
-    param(
-        [string]$newVariableName,
-        [string]$newVariableValue,
-        [boolean]$updatePath = 0
-    )
+    param( [string]$newVariableName, [string]$newVariableValue,
+        [boolean]$updatePath = 0, $overrideExistingEnvVars = "no" )
+    
+    $existingVariableName = [System.Environment]::GetEnvironmentVariable($newVariableName, [System.EnvironmentVariableTarget]::Machine)
+    if ($existingVariableName -eq $null -or $overrideExistingEnvVars -eq "yes") {
+        [System.Environment]::SetEnvironmentVariable($newVariableName, $newVariableValue, [System.EnvironmentVariableTarget]::Machine)
+    }
 
-    [System.Environment]::SetEnvironmentVariable($newVariableName, $newVariableValue, [System.EnvironmentVariableTarget]::Machine)
     if ($updatePath -eq 1) {
         Update-Path-Env-Variable -variableName $newVariableName
     }
