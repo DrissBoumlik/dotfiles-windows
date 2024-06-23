@@ -14,9 +14,10 @@ bzsh=bash -c zsh
 bsh=C:\Cmder\vendor\conemu-maximus5\..\git-for-windows\bin\bash $*
 a:r=alias /reload
 w:env=%windir%\System32\SystemPropertiesAdvanced.exe
-
+env:r=RefreshEnv.cmd
 rem =================== PLUGINS ============
 historyf="C:\Cmder\vendor\clink\clink_x64.exe" history | fzf $*
+historyf2="C:\Cmder\vendor\clink\clink_x64.exe" history | fzf --exact --multi --border=rounded --color=border:7,marker:1,pointer:5,header:6,info:6,prompt:6,spinner:4 --reverse --tac --header="______________________" --cycle --pointer=">>" --marker=">>"
 aliasf=alias | fzf $*
 zadd=z --add $*
 
@@ -97,19 +98,19 @@ _jest=node "node_modules\jest\bin\jest.js" $*
 _mocha=node "node_modules\mocha\bin\mocha.js" $*  
 
 rem ===============================  ENV  ===============================
-setphp=setx php_now %$1% /m && RefreshEnv.cmd
-setpy=setx python_now %$1% /m && RefreshEnv.cmd 
+setphp=setx php_now "%$1%" /m && RefreshEnv.cmd
+setpy=setx python_now "%$1%" /m && RefreshEnv.cmd 
 zi=z -I $*
 jsc=tsc $1.ts $* && node $1.js
 
 
 rem ===============================  PHP (TOOLS)  ===============================
 php56="D:\Code\env-setup\php\php-5.6.9-Win32-VC11-x64\php" $*
-php70="D:\Code\env-setup\php\php-7.0.9-Win32-VC14-x64\php" $*
+php7="D:\Code\env-setup\php\php-7.0.9-Win32-VC14-x64\php" $*
 php72="D:\Code\env-setup\php\php-7.2.9-Win32-VC15-x64\php" $*
 php74="D:\Code\env-setup\php\php-7.4.9-Win32-vc15-x64\php" $* 
-phpxmp="C:\xampp\php\php.exe" $* 
-php80="D:\Code\env-setup\php\php-8.0.9-Win32-vs16-x64\php" $*
+phpxmp="C:\xampp-8.1\php\php.exe" $* 
+php8="D:\Code\env-setup\php\php-8.0.9-Win32-vs16-x64\php" $*
 php81="D:\Code\env-setup\php\php-8.1.9-Win32-vs16-x64\php" $*
 php82="D:\Code\env-setup\php\php-8.2.9-Win32-vs16-x64\php" $*
 pv=php -v
