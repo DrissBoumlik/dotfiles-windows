@@ -19,9 +19,9 @@ function Setup-Cmder {
     $cmderStuff = @(
         "$downloadPath\Cmder\vendor\git-for-windows\usr\bin",
         "$downloadPath\Cmder\vendor\bin",
-        "C:\Cmder\vendor",
-        "C:\Cmder\bin",
-        "C:\Cmder"
+        "$downloadPath\Cmder\vendor",
+        "$downloadPath\Cmder\bin",
+        "$downloadPath\Cmder"
     )
     $cmderStuff = $cmderStuff -join ";"
     Add-Env-Variable -newVariableName "cmder_stuff" -newVariableValue $cmderStuff -updatePath 1 -overrideExistingEnvVars $overrideExistingEnvVars
@@ -60,7 +60,7 @@ function Setup-Cmder {
     #endregion
     
     $WhatWasDoneMessages += [PSCustomObject]@{
-        Message = "- Cmder\vendor\git-for-windows\usr\bin and Cmder\vendor\bin were added to the PATH variable"
+        Message = "- Cmder paths were added to the PATH variable"
         ForegroundColor = "Black"
         BackgroundColor = "Green"
     }
