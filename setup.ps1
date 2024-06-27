@@ -4,7 +4,7 @@
 
 Write-Host "`nThis will setup your env with (Git, Xampp, Composer, NVM, Chocolatey, Cmder, PHP, XDebug)`n"
 
-#region Answer Questions for which steps to execute
+#region ANSWER QUESTIONS FOR WHICH STEPS TO EXECUTE
 $StepsQuestions = [ordered]@{
    GIT = [PSCustomObject]@{ Question = "- Download Git ?"; Answer = "no" }
    XAMPP = [PSCustomObject]@{ Question = "- Download Xampp ?"; Answer = "no" }

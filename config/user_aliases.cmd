@@ -37,6 +37,7 @@ gl=git log --oneline --all --graph --decorate  $*
 gc=git commit $*
 gd=git diff $*
 gcm=git commit -m "$*"
+gcmall=git add . && git commit -m "$*"
 wip=git add . && git commit -m "$* (wip)"  
 gpl=git pull $*
 gps=git push $*
