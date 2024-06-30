@@ -38,7 +38,7 @@ function Setup-Cmder {
     Remove-Item "$downloadPath\flexprompt.zip"
     #endregion
 
-    #region DOWNLOAD & SETUP Z
+    #region DOWNLOAD & SETUP Z / ZOXIDE
     Write-Host "`nDownloading & Extracting Z..."
     $zUrl = "https://github.com/skywind3000/z.lua/archive/refs/heads/master.zip"
     Download-File -url $zUrl -output "$downloadPath\z.zip"

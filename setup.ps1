@@ -11,6 +11,7 @@ $StepsQuestions = [ordered]@{
    COMPOSER = [PSCustomObject]@{ Question = "- Download Composer ?"; Answer = "no" }
    NVM = [PSCustomObject]@{ Question = "- Download Nvm ?"; Answer = "no" }
    CHOCO = [PSCustomObject]@{ Question = "- Download Chocolatey ?"; Answer = "no" }
+   TOOLS = [PSCustomObject]@{ Question = "- Download TOOLS (eza, delta, bat, less) ?"; Answer = "no" }
    CMDER = [PSCustomObject]@{ Question = "- Download & Configure Cmder ?"; Answer = "no" }
    FONTS = [PSCustomObject]@{ Question = "- Download Nerd Fonts "; Answer = "no" }
    PHP = [PSCustomObject]@{ Question = "- Download PHP versions "; Answer = "no" }
@@ -59,7 +60,7 @@ if ($StepsQuestions["GIT"].Answer -eq "yes") {
     }
     catch {
         $WhatWasDoneMessages += [PSCustomObject]@{
-            Message = "- Git failed to download, try later :("
+            Message = "- Git failed to download, try again :("
             ForegroundColor = "Black"
             BackgroundColor = "Red"
         }
@@ -81,7 +82,7 @@ if ($StepsQuestions["XAMPP"].Answer -eq "yes") {
     }
     catch {
         $WhatWasDoneMessages += [PSCustomObject]@{
-            Message = "- Xampp failed to download, try later :("
+            Message = "- Xampp failed to download, try again :("
             ForegroundColor = "Black"
             BackgroundColor = "Red"
         }
@@ -104,7 +105,7 @@ if ($StepsQuestions["COMPOSER"].Answer -eq "yes") {
     }
     catch {
         $WhatWasDoneMessages += [PSCustomObject]@{
-            Message = "- Composer failed to download, try later :("
+            Message = "- Composer failed to download, try again :("
             ForegroundColor = "Black"
             BackgroundColor = "Red"
         }
@@ -127,7 +128,7 @@ if ($StepsQuestions["NVM"].Answer -eq "yes") {
     }
     catch {
         $WhatWasDoneMessages += [PSCustomObject]@{
-            Message = "- NVM failed to download, try later :("
+            Message = "- NVM failed to download, try again :("
             ForegroundColor = "Black"
             BackgroundColor = "Red"
         }
@@ -149,13 +150,80 @@ if ($StepsQuestions["CHOCO"].Answer -eq "yes") {
     }
     catch {
         $WhatWasDoneMessages += [PSCustomObject]@{
-            Message = "- Chocolatey failed to install, try later :("
+            Message = "- Chocolatey failed to install, try again :("
             ForegroundColor = "Black"
             BackgroundColor = "Red"
         }
     }
 }
 #endregion
+
+if ($StepsQuestions["TOOLS"].Answer -eq "yes") {
+    try {
+        Make-Directory "$downloadPath\tools"
+        $tools = @()
+        #region DOWNLOAD & SETUP EZA
+        Write-Host "`nDownloading & Extracting EZA..."
+        $ezaUrl = "https://github.com/eza-community/eza/releases/download/v0.18.19/eza.exe_x86_64-pc-windows-gnu.zip"
+        Download-File -url $ezaUrl -output "$downloadPath\eza.zip"
+
+        Extract-Zip -zipPath "$downloadPath\eza.zip" -extractPath "$downloadPath\tools\eza"
+        $tools += "$downloadPath\tools\eza"
+        Remove-Item "$downloadPath\eza.zip"
+        #endregion
+
+        #region DOWNLOAD & SETUP DELTA
+        Write-Host "`nDownloading & Extracting DELTA..."
+        $deltaUrl = "https://github.com/dandavison/delta/releases/download/0.15.0/delta-0.15.0-x86_64-pc-windows-msvc.zip"
+        Download-File -url $deltaUrl -output "$downloadPath\delta.zip"
+
+        Extract-Zip -zipPath "$downloadPath\delta.zip" -extractPath "$downloadPath\tools"
+        $directories = Get-ChildItem -Path "$downloadPath\tools" -Directory -ErrorAction SilentlyContinue -Force | Where-Object { $_.Name -match 'delta' }
+        $deltaPath = ($directories | Select-Object -First 1).FullName
+        Rename-Item -Path $deltaPath -NewName "delta"
+        $tools += "$downloadPath\tools\delta"
+        Remove-Item "$downloadPath\delta.zip"
+        #endregion
+
+        #region DOWNLOAD & SETUP BAT
+        Write-Host "`nDownloading & Extracting BAT..."
+        $batUrl = "https://github.com/sharkdp/bat/releases/download/v0.24.0/bat-v0.24.0-x86_64-pc-windows-msvc.zip"
+        Download-File -url $batUrl -output "$downloadPath\bat.zip"
+
+        Extract-Zip -zipPath "$downloadPath\bat.zip" -extractPath "$downloadPath\tools"
+        $directories = Get-ChildItem -Path "$downloadPath\tools" -Directory -ErrorAction SilentlyContinue -Force | Where-Object { $_.Name -match 'bat' }
+        $batPath = ($directories | Select-Object -First 1).FullName
+        Rename-Item -Path $batPath -NewName "bat"
+        $tools += "$downloadPath\tools\bat"
+        Remove-Item "$downloadPath\bat.zip"
+        #endregion
+
+        #region DOWNLOAD & RELACE LESS
+        Write-Host "`nDownloading & Extracting LESS..."
+        $lessUrl = "https://github.com/jftuga/less-Windows/releases/download/less-v643/less-arm64.zip"
+        Download-File -url $lessUrl -output "$downloadPath\less.zip"
+
+        Extract-Zip -zipPath "$downloadPath\less.zip" -extractPath "$downloadPath\tools\less"
+        $tools += "$downloadPath\tools\less"
+        Remove-Item "$downloadPath\less.zip"
+        #endregion
+
+        $tools = $tools -join ";"
+        Add-Env-Variable -newVariableName "tools" -newVariableValue $tools -updatePath 1 -overrideExistingEnvVars $overrideExistingEnvVars
+        $WhatWasDoneMessages += [PSCustomObject]@{
+            Message = "- Tools (eza, delta, bat, less) downloaded & configured successfully :)"
+            ForegroundColor = "Black"
+            BackgroundColor = "Green"
+        }
+    }
+    catch {
+        $WhatWasDoneMessages += [PSCustomObject]@{
+            Message = "- One of the tools (eza, delta, bat, less) failed to download, try again :("
+            ForegroundColor = "Black"
+            BackgroundColor = "Red"
+        }
+    }
+}
 
 #region SETUP CMDER
 if ($StepsQuestions["CMDER"].Answer -eq "yes") {
