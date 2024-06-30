@@ -19,7 +19,7 @@ $StepsQuestions = [ordered]@{
 
 foreach ($key in $StepsQuestions.Keys) {
     $q = $StepsQuestions[$key]
-    $q.Answer = Prompt-YesOrNoWithDefault -message $q.Question
+    $q.Answer = Prompt-YesOrNoWithDefault -message $q.Question -defaultOption "yes"
 }
 #endregion
 
