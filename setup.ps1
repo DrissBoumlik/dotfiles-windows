@@ -163,7 +163,7 @@ if ($StepsQuestions["TOOLS"].Answer -eq "yes") {
         Make-Directory "$downloadPath\tools"
         $tools = @()
         #region DOWNLOAD & SETUP EZA
-        Write-Host "`nDownloading & Extracting EZA..."
+        Write-Host "`nDownloading & Extracting EZA (better ls)..."
         $ezaUrl = "https://github.com/eza-community/eza/releases/download/v0.18.19/eza.exe_x86_64-pc-windows-gnu.zip"
         Download-File -url $ezaUrl -output "$downloadPath\eza.zip"
 
@@ -173,7 +173,7 @@ if ($StepsQuestions["TOOLS"].Answer -eq "yes") {
         #endregion
 
         #region DOWNLOAD & SETUP DELTA
-        Write-Host "`nDownloading & Extracting DELTA..."
+        Write-Host "`nDownloading & Extracting DELTA  (better git diff)..."
         $deltaUrl = "https://github.com/dandavison/delta/releases/download/0.15.0/delta-0.15.0-x86_64-pc-windows-msvc.zip"
         Download-File -url $deltaUrl -output "$downloadPath\delta.zip"
 
@@ -186,7 +186,7 @@ if ($StepsQuestions["TOOLS"].Answer -eq "yes") {
         #endregion
 
         #region DOWNLOAD & SETUP BAT
-        Write-Host "`nDownloading & Extracting BAT..."
+        Write-Host "`nDownloading & Extracting BAT (better cat)..."
         $batUrl = "https://github.com/sharkdp/bat/releases/download/v0.24.0/bat-v0.24.0-x86_64-pc-windows-msvc.zip"
         Download-File -url $batUrl -output "$downloadPath\bat.zip"
 
