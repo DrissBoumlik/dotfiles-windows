@@ -160,15 +160,16 @@ if ($StepsQuestions["CHOCO"].Answer -eq "yes") {
 
 if ($StepsQuestions["TOOLS"].Answer -eq "yes") {
     try {
-        Make-Directory "$downloadPath\tools"
+        Make-Directory -path "$downloadPath\env"
+        Make-Directory -path "$downloadPath\env\tools"
         $tools = @()
         #region DOWNLOAD & SETUP EZA
         Write-Host "`nDownloading & Extracting EZA (better ls)..."
         $ezaUrl = "https://github.com/eza-community/eza/releases/download/v0.18.19/eza.exe_x86_64-pc-windows-gnu.zip"
         Download-File -url $ezaUrl -output "$downloadPath\eza.zip"
 
-        Extract-Zip -zipPath "$downloadPath\eza.zip" -extractPath "$downloadPath\tools\eza"
-        $tools += "$downloadPath\tools\eza"
+        Extract-Zip -zipPath "$downloadPath\eza.zip" -extractPath "$downloadPath\env\tools\eza"
+        $tools += "$downloadPath\env\tools\eza"
         Remove-Item "$downloadPath\eza.zip"
         #endregion
 
@@ -177,11 +178,11 @@ if ($StepsQuestions["TOOLS"].Answer -eq "yes") {
         $deltaUrl = "https://github.com/dandavison/delta/releases/download/0.15.0/delta-0.15.0-x86_64-pc-windows-msvc.zip"
         Download-File -url $deltaUrl -output "$downloadPath\delta.zip"
 
-        Extract-Zip -zipPath "$downloadPath\delta.zip" -extractPath "$downloadPath\tools"
-        $directories = Get-ChildItem -Path "$downloadPath\tools" -Directory -ErrorAction SilentlyContinue -Force | Where-Object { $_.Name -match 'delta' }
+        Extract-Zip -zipPath "$downloadPath\delta.zip" -extractPath "$downloadPath\env\tools"
+        $directories = Get-ChildItem -Path "$downloadPath\env\tools" -Directory -ErrorAction SilentlyContinue -Force | Where-Object { $_.Name -match 'delta' }
         $deltaPath = ($directories | Select-Object -First 1).FullName
         Rename-Item -Path $deltaPath -NewName "delta"
-        $tools += "$downloadPath\tools\delta"
+        $tools += "$downloadPath\env\tools\delta"
         Remove-Item "$downloadPath\delta.zip"
         #endregion
 
@@ -190,11 +191,11 @@ if ($StepsQuestions["TOOLS"].Answer -eq "yes") {
         $batUrl = "https://github.com/sharkdp/bat/releases/download/v0.24.0/bat-v0.24.0-x86_64-pc-windows-msvc.zip"
         Download-File -url $batUrl -output "$downloadPath\bat.zip"
 
-        Extract-Zip -zipPath "$downloadPath\bat.zip" -extractPath "$downloadPath\tools"
-        $directories = Get-ChildItem -Path "$downloadPath\tools" -Directory -ErrorAction SilentlyContinue -Force | Where-Object { $_.Name -match 'bat' }
+        Extract-Zip -zipPath "$downloadPath\bat.zip" -extractPath "$downloadPath\env\tools"
+        $directories = Get-ChildItem -Path "$downloadPath\env\tools" -Directory -ErrorAction SilentlyContinue -Force | Where-Object { $_.Name -match 'bat' }
         $batPath = ($directories | Select-Object -First 1).FullName
         Rename-Item -Path $batPath -NewName "bat"
-        $tools += "$downloadPath\tools\bat"
+        $tools += "$downloadPath\env\tools\bat"
         Remove-Item "$downloadPath\bat.zip"
         #endregion
 
@@ -203,8 +204,8 @@ if ($StepsQuestions["TOOLS"].Answer -eq "yes") {
         $lessUrl = "https://github.com/jftuga/less-Windows/releases/download/less-v643/less-arm64.zip"
         Download-File -url $lessUrl -output "$downloadPath\less.zip"
 
-        Extract-Zip -zipPath "$downloadPath\less.zip" -extractPath "$downloadPath\tools\less"
-        $tools += "$downloadPath\tools\less"
+        Extract-Zip -zipPath "$downloadPath\less.zip" -extractPath "$downloadPath\env\tools\less"
+        $tools += "$downloadPath\env\tools\less"
         Remove-Item "$downloadPath\less.zip"
         #endregion
 
@@ -319,13 +320,14 @@ if ($StepsQuestions["PHP"].Answer -eq "yes") {
         )
         Make-Directory -path "$downloadPath\env"
         Make-Directory -path "$downloadPath\env\zip"
-        Make-Directory -path "$downloadPath\env\php"
+        Make-Directory -path "$downloadPath\env\php_stuff"
+        Make-Directory -path "$downloadPath\env\php_stuff\php"
         foreach ($url in $phpUrls) {
             $fileNameZip = Split-Path $url -Leaf
             $fileName = $fileNameZip -replace ".zip", ""
             Download-File -url $url -output "$downloadPath\env\zip\$fileNameZip"
-            Extract-Zip -zipPath "$downloadPath\env\zip\$fileNameZip" -extractPath "$downloadPath\env\php\$fileName"
-            Copy-Item -Path "$downloadPath\env\php\$fileName\php.ini-development" -Destination "$downloadPath\env\php\$fileName\php.ini"
+            Extract-Zip -zipPath "$downloadPath\env\zip\$fileNameZip" -extractPath "$downloadPath\env\php_stuff\php\$fileName"
+            Copy-Item -Path "$downloadPath\env\php_stuff\php\$fileName\php.ini-development" -Destination "$downloadPath\env\php_stuff\php\$fileName\php.ini"
             if ($fileName -match "php-(\d+)\.(\d+)\.") {
                 $majorVersion = $matches[1]
                 $minorVersion = $matches[2]
@@ -335,7 +337,7 @@ if ($StepsQuestions["PHP"].Answer -eq "yes") {
                     $phpEnvVarName = "$majorVersion$minorVersion"
                 }
                 $phpEnvVarName = "php$phpEnvVarName"
-                Add-Env-Variable -newVariableName $phpEnvVarName -newVariableValue "$downloadPath\env\php\$fileName" -updatePath 0 -overrideExistingEnvVars $overrideExistingEnvVars
+                Add-Env-Variable -newVariableName $phpEnvVarName -newVariableValue "$downloadPath\env\php_stuff\php\$fileName" -updatePath 0 -overrideExistingEnvVars $overrideExistingEnvVars
             }
         }
 
@@ -347,15 +349,40 @@ if ($StepsQuestions["PHP"].Answer -eq "yes") {
             $fileName = Split-Path $url -Leaf
             Download-File -url $url -output "$downloadPath\env\$fileName"
         }
-
         Remove-Item -Path "$downloadPath\env\zip" -Recurse -Force
+
+        # phpcs, phpcbf, phpmd, phpstan, phpfixer
+        $phpTools = @(
+            @{ name = "phpcs"; url = "https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar" }
+            @{ name = "phpcbf"; url = "https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar" }
+            @{ name = "phpmd"; url = "https://github.com/phpmd/phpmd/releases/download/2.15.0/phpmd.phar" }
+            @{ name = "phpstan"; url = "https://github.com/phpstan/phpstan/releases/download/1.11.5/phpstan.phar" }
+            @{ name = "phpcsfixer"; url = "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/releases/download/v3.59.3/php-cs-fixer.phar" }
+        )
+        Make-Directory -path "$downloadPath\env\php_stuff\tools"
+        foreach ($phpTool in $phpTools) {
+            $url = $phpTool.url 
+            $path = "$downloadPath\env\php_stuff\tools" 
+            $fileName = $phpTool.name
+
+            Download-File -url $url -output "$path\$fileName.phar"
+            $batString = @"
+            @echo OFF
+            :: in case DelayedExpansion is on and a path contains ! 
+            setlocal DISABLEDELAYEDEXPANSION
+            php "%~dp0$fileName.phar" %*
+"@
+            $batString = $batString -replace "\ {4,}"
+            Add-Content -Path "$path\$fileName.bat" -Value $batString
+        }
+
         $WhatWasDoneMessages += [PSCustomObject]@{
-            Message = "- PHP versions downloaded & setup successfully :)"
+            Message = "- PHP versions (& Tools) were downloaded & setup successfully :)"
             ForegroundColor = "Black"
             BackgroundColor = "Green"
         }
         $WhatToDoNext += [PSCustomObject]@{
-            Message = "- Your PHP path is '$downloadPath\env\php'"
+            Message = "- Your PHP path is '$downloadPath\env\php_stuff\php'"
             ForegroundColor = "Black"
             BackgroundColor = "Gray"
         }
@@ -440,17 +467,18 @@ if ($StepsQuestions["XDEBUG"].Answer -eq "yes") {
             "https://xdebug.org/files/php_xdebug-2.3.0-5.6-vc11-x86_64.dll"
         )
         Make-Directory -path "$downloadPath\env"
-        Make-Directory -path "$downloadPath\env\xdebug"
+        Make-Directory -path "$downloadPath\env\php_stuff"
+        Make-Directory -path "$downloadPath\env\php_stuff\xdebug"
         $phpVersionsWithXdebug = @()
         foreach ($url in $xdebugUrls) {
             $fileName = Split-Path $url -Leaf
             if ($fileName -match "-(\d+\.\d+)-(vs|vc)") {
                 $phpVersion = $matches[1]
-                Make-Directory -path "$downloadPath\env\xdebug\$phpVersion"
-                $outputPathXdebug = "$downloadPath\env\xdebug\$phpVersion\$fileName"
+                Make-Directory -path "$downloadPath\env\php_stuff\xdebug\$phpVersion"
+                $outputPathXdebug = "$downloadPath\env\php_stuff\xdebug\$phpVersion\$fileName"
                 Download-File -url $url -output $outputPathXdebug
 
-                $phpPaths = Get-ChildItem -Path "$downloadPath\env\php" -Directory | Select-Object -ExpandProperty Name
+                $phpPaths = Get-ChildItem -Path "$downloadPath\env\php_stuff\php" -Directory | Select-Object -ExpandProperty Name
                 if ($phpPaths.Count -gt 0) {
                     $xDebugConfig = @"
 
@@ -479,7 +507,7 @@ if ($StepsQuestions["XDEBUG"].Answer -eq "yes") {
                             if (-not($phpVersionsWithXdebug -contains $phpVersion)) {
                                 $phpVersionsWithXdebug += $phpVersion
                                 $xDebugConfig = $xDebugConfig -replace "\ +"
-                                Add-Content -Path "$downloadPath\env\php\$phpPath\php.ini" -Value $xDebugConfig
+                                Add-Content -Path "$downloadPath\env\php_stuff\php\$phpPath\php.ini" -Value $xDebugConfig
                                 break
                             }
                         }
@@ -493,7 +521,7 @@ if ($StepsQuestions["XDEBUG"].Answer -eq "yes") {
             BackgroundColor = "Green"
         }
         $WhatToDoNext += [PSCustomObject]@{
-            Message = "- Your XDebug path is '$downloadPath\env\xdebug'"
+            Message = "- Your XDebug path is '$downloadPath\env\php_stuff\xdebug'"
             ForegroundColor = "Black"
             BackgroundColor = "Gray"
         }

@@ -51,16 +51,45 @@ if ($response -eq "yes" -or $response -eq "y") {
     Copy-Item -Path "$PWD\config\ConEmu.xml" -Destination "$downloadPath\Cmder\vendor\conemu-maximus5\ConEmu.xml" 
     Get-Content -Path "$PWD\config\user_aliases.cmd" | Add-Content -Path "$downloadPath\Cmder\config\user_aliases.cmd"
 
-    Make-Directory "$downloadPath\tools"
-    Copy-Item -Path "$PWD\config\set-env.bat" -Destination "$downloadPath\tools\set-env.bat"
-    Add-Content "setvar=""$downloadPath\tools\set-env.bat"" `$1 `$2 && RefreshEnv.cmd" -Path "$downloadPath\Cmder\config\user_aliases.cmd"
+    Make-Directory "$downloadPath\env\tools"
+    Copy-Item -Path "$PWD\config\set-env.bat" -Destination "$downloadPath\env\tools\set-env.bat"
+    Add-Content "setvar=""$downloadPath\env\tools\set-env.bat"" `$1 `$2 && RefreshEnv.cmd" -Path "$downloadPath\Cmder\config\user_aliases.cmd"
+    $directories = Get-ChildItem -Path "C:\" -Directory -ErrorAction SilentlyContinue -Force | Where-Object { $_.Name -match 'xampp' }
+    if ($directories.Count -gt 0) {
+        $xamppPath = ($directories | Select-Object -First 1).FullName
+        Add-Content "phpxmp=""$xamppPath\php\php.exe"" $*" -Path "$downloadPath\Cmder\config\user_aliases.cmd"
+    }
+    $phpPaths = Get-ChildItem -Path "$downloadPath\env\php_stuff\php" -Directory | Select-Object -ExpandProperty Name
+    if ($phpPaths.Count -gt 0) {
+        foreach ($phpPath in $phpPaths) {
+            if ($phpPath -match "php-(\d+)\.(\d+)\.") {
+                $majorVersion = $matches[1]
+                $minorVersion = $matches[2]
+                if ($minorVersion -eq '0') {
+                    $phpVersion = $majorVersion
+                } else {
+                    $phpVersion = "$majorVersion$minorVersion"
+                }
+                Add-Content "php$phpVersion=""$downloadPath\env\php_stuff\php\$phpPath\php.exe"" $*" -Path "$downloadPath\Cmder\config\user_aliases.cmd"
+            }
+        }
+    }
+    
+    $phpToolsPaths = Get-ChildItem -Path "$downloadPath\env\php_stuff\tools" -File -Filter "*.phar"
+    if ($phpToolsPaths.Count -gt 0) {
+        foreach ($phpToolPath in $phpToolsPaths) {
+            $fileName = $phpToolPath.BaseName
+            Add-Content "$fileName=php ""$downloadPath\env\php_stuff\tools\$fileName.phar"" $*" -Path "$downloadPath\Cmder\config\user_aliases.cmd"
+        }
+    }
+
     
     $response = Prompt-YesOrNoWithDefault -message "Did you download less?"
     if ($response -eq "yes" -or $response -eq "y") {
         $lessCmderPath = "Cmder\vendor\git-for-windows\usr\bin"
         Move-Item -Path "$downloadPath\$lessCmderPath\less.exe" -Destination "$downloadPath\$lessCmderPath\less.exe.bak"
         Move-Item -Path "$downloadPath\$lessCmderPath\lesskey.exe" -Destination "$downloadPath\$lessCmderPath\lesskey.exe.bak"
-        Copy-Item "$downloadPath\tools\less\less.exe", "$downloadPath\tools\less\lesskey.exe" -Destination "$downloadPath\$lessCmderPath\"
+        Copy-Item "$downloadPath\env\tools\less\less.exe", "$downloadPath\env\tools\less\lesskey.exe" -Destination "$downloadPath\$lessCmderPath\"
         Write-Host "`n- Less was replaced in 'Cmder\vendor\git-for-windows\usr\bin'" -ForegroundColor Black -BackgroundColor Green
     }
 
