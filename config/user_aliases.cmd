@@ -106,20 +106,7 @@ jsc=tsc $1.ts $* && node $1.js
 
 
 rem ===============================  PHP (TOOLS)  ===============================
-php56="D:\Code\env-setup\php\php-5.6.9-Win32-VC11-x64\php" $*
-php7="D:\Code\env-setup\php\php-7.0.9-Win32-VC14-x64\php" $*
-php72="D:\Code\env-setup\php\php-7.2.9-Win32-VC15-x64\php" $*
-php74="D:\Code\env-setup\php\php-7.4.9-Win32-vc15-x64\php" $* 
-phpxmp="C:\xampp-8.1\php\php.exe" $* 
-php8="D:\Code\env-setup\php\php-8.0.9-Win32-vs16-x64\php" $*
-php81="D:\Code\env-setup\php\php-8.1.9-Win32-vs16-x64\php" $*
-php82="D:\Code\env-setup\php\php-8.2.9-Win32-vs16-x64\php" $*
 pv=php -v
-phpcs=php "D:\Code\env-setup\tools\phpcs.phar" $*
-phpcbf=php "D:\Code\env-setup\tools\phpcbf.phar" $*
-phpmd=php "D:\Code\env-setup\tools\phpmd.phar" $*
-phpstan=php "D:\Code\env-setup\tools\phpstan.phar" $*
-phpfixer=php "D:\Code\env-setup\tools\php-cs-fixer-v3.phar" $*
 punit=.\vendor\bin\phpunit $*
 
 rem ===============================  PYTHON  ===============================
@@ -217,23 +204,10 @@ code.=code . $*
 cpy=echo $1|clip && $1|clip
 
 rem ===============================  CD..  ===============================
-_desktop=cd "C:\Users\cartouche\_desktop" && C:
-desktop=cd "C:\Users\cartouche\Desktop\" && C:
-.ssh=cd "C:\Users\cartouche\.ssh\" && C:  
-bot=cd "D:\Code\Personal\Projects\teabot-py" && D:
-learn=cd "D:\Code\Personal\Learning" && D:
-books=cd "D:\Books" && D:
-community=cd "D:\Code\Personal\community" && D:
-projects=cd "D:\Code\Personal\projects" && D:
-db=cd "D:\Code\Personal\Projects\drissboumlik.com\drissboumlik.com_src\" && D:
-tc=cd "D:\Code\Personal\Projects\teacode.ma\teacode.ma_src\" && D:
-phpdir=cd "D:\Code\env-setup\php\" && D:
-envdir=cd "D:\Code\env-setup\" && D:
-home=cd "C:\Users\cartouche\" && C:
-work=cd "D:\Code\Work\" && D:
-mine=cd "D:\Code\Personal\" && D:
-bb=cd "D:\Code\Work\Free\b2b\b2b_src" && D:
-proconnect=cd "D:\Code\Work\Free\proconnect\proconnect_src\" && D:
+_desktop=cd "%USERPROFILE%\_desktop" && C:
+desktop=cd "%USERPROFILE%\Desktop\" && C:
+.ssh=cd "%USERPROFILE%\.ssh\" && C:  
+home=cd "%USERPROFILE%\" && C:
 
 rem ===============================  SSH  ===============================
 tchost=ssh -p 65002 u110977776@212.107.17.137   
@@ -243,5 +217,4 @@ aws=ssh -i ~/.ssh/Laravel-Test-1.pem ubuntu@3.142.52.151
 olivaws=ssh driss@ec2-172-31-7-107.us-east-2.compute.amazonaws.com  
 
 rem ===============================  SCRIPTS  ===============================
-patchbb=sh "/d/Code/Work/Free/Generate-Patch/build.sh" $*   
 

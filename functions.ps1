@@ -72,6 +72,12 @@ function Setup-Cmder {
     return $WhatWasDoneMessages
 }
 
+function Add-Alias-To-Cmder {
+    param ( [string]$alias, [string]$downloadPath )
+    $aliasFilePath = "$downloadPath\Cmder\config\user_aliases.cmd"
+    Add-Content $alias -Path $aliasFilePath
+}
+
 function Make-Directory {
     param ( [string]$path )
 
