@@ -28,8 +28,19 @@ $WhatWasDoneMessages = @()
 $WhatToDoNext = @()
 
 #region SETUP THE CONTAINER DIRECTORY
-$downloadPath = Prompt-Quesiton -message "`nIndicate the target directory (C:\[Container])"
-$downloadPath = "C:\$downloadPath"
+do {
+    $downloadPath = Prompt-Quesiton -message "`nIndicate the target directory (ex: C:\Container)"
+    $partitions = Get-Partition | Where-Object { $_.DriveLetter -match "[A-Za-z]" } | Select-Object -ExpandProperty DriveLetter
+    $partitionsLetters = $partitions -join ""
+    if (-not $downloadPath -or $downloadPath -eq "" ) {
+        $downloadPath = "C:\__Container"
+        break
+    } elseif (-not ($downloadPath -match "^[$partitionsLetters]:\\.{3,20}$")) {
+        Write-Host "`n- Not a valid directory :( " -BackgroundColor Yellow -ForegroundColor Black
+    }
+} while (-not ($downloadPath -match "^[$partitionsLetters]:\\.{3,20}$"))
+Write-Host "`n- Your working directory is $downloadPath :) " -BackgroundColor Green -ForegroundColor Black
+Start-Sleep -Seconds 2
 
 $WhatToDoNext += [PSCustomObject]@{
     Message = "- Your container path is '$downloadPath'"
@@ -158,6 +169,7 @@ if ($StepsQuestions["CHOCO"].Answer -eq "yes") {
 }
 #endregion
 
+#region DOWNLOAD AND SETUP EZA, DELTA, BAT, LESS
 if ($StepsQuestions["TOOLS"].Answer -eq "yes") {
     try {
         Make-Directory -path "$downloadPath\env"
@@ -225,6 +237,7 @@ if ($StepsQuestions["TOOLS"].Answer -eq "yes") {
         }
     }
 }
+#endregion
 
 #region SETUP CMDER
 if ($StepsQuestions["CMDER"].Answer -eq "yes") {
